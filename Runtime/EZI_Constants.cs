@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using EthanZarov;
 
-namespace EthanZarov.SimpleTools.EasyInput
+namespace EthanZarov.EZInput
 {
-    public class Constants : MonoBehaviour
+    public class EZI_Constants : MonoBehaviour
     {
 
         [SerializeField] bool receivesInput;
@@ -18,6 +17,7 @@ namespace EthanZarov.SimpleTools.EasyInput
 
 
         [SerializeField] private Camera mainCamera;
+
 
         private void Awake()
         {
@@ -34,10 +34,16 @@ namespace EthanZarov.SimpleTools.EasyInput
             if (receivesInput)
             {
                 pressed = false;
-                EasyInput.DetectTouches(out pressed, out touchP, mainCamera);
+                EZInput.DetectTouches(out pressed, out touchP, mainCamera);
 
-                if (pressed) Physics.OverlapSphereNonAlloc(touchP, .1f, colliders);
+                if (pressed)
+                {
+                    Physics.OverlapSphereNonAlloc(touchP, .1f, colliders); 
+                }
                 else ClearArray();
+
+
+
             }
 
             if (debugMode) DebugTouch();

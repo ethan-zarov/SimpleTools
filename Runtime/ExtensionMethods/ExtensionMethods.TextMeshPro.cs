@@ -58,6 +58,12 @@ namespace EthanZarov.SimpleTools
             return text.Resize("75%").Colorize("#dddce6");
         }
 
+        public static string NegatizedWord(this string text, bool trueFalseValue)
+        {
+            if (!trueFalseValue) return text + "n't";
+            else return text;
+        }
+
     }
 
 }

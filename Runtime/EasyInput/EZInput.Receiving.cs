@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using EthanZarov.SimpleTools;
 
-namespace EthanZarov.SimpleTools.EasyInput
+namespace EthanZarov.EZInput
 {
     /// - Handles any and all incoming touch input - ///
-    public static partial class EasyInput
+    public static partial class EZInput
     {
         /// <summary>
         /// Detects whether the player touched the screen at any position.

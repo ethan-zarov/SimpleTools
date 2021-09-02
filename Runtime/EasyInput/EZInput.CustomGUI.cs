@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using EthanZarov.SimpleTools;
 
-namespace EthanZarov.SimpleTools.EasyInput
+namespace EthanZarov.EZInput
 {
     /// - Handles any custom slider or UI interactions - ///
-    public static partial class EasyInput
+    public static partial class EZInput
     {
         /// <summary>
         /// Manages knob of a horizontal slider with multiple snapped positions.
@@ -26,7 +26,7 @@ namespace EthanZarov.SimpleTools.EasyInput
             DetectTouchesHeld(out holdingDown, out pressedFrame, out touchPos);
             Vector3 localTouchPos = touchPos.GlobalToLocalPos(_transform.GetLocalOffset());
             localTouchPos.z = 0;
-            if (pressedFrame && TouchedHitbox(totalHitbox, touchPos))
+            if (pressedFrame && EZI_Touched(totalHitbox, touchPos))
             {
                 int bestIndex = 0;
                 float bestDistance = 999;
@@ -114,7 +114,7 @@ namespace EthanZarov.SimpleTools.EasyInput
             DetectTouchesHeld(out holdingDown, out pressedFrame, out touchPos);
             Vector3 localTouchPos = touchPos.GlobalToLocalPos(_transform.GetLocalOffset());
             localTouchPos.z = 0;
-            if (pressedFrame && TouchedHitbox(totalHitbox, touchPos))
+            if (pressedFrame && totalHitbox.EZI_Touched(touchPos))
             {
                 inMoveReturn = true;
                 Vector3 localPos = _transform.localPosition;
@@ -154,7 +154,7 @@ namespace EthanZarov.SimpleTools.EasyInput
             DetectTouchesHeld(out holdingDown, out pressedFrame, out touchPos);
             Vector3 localTouchPos = touchPos.GlobalToLocalPos(_transform.GetLocalOffset());
             localTouchPos.z = 0;
-            if (pressedFrame && TouchedHitbox(hitbox, touchPos))
+            if (pressedFrame && hitbox.EZI_Touched(touchPos))
             {
                 inMoveReturn = true;
                 initTouchP = localTouchPos;
