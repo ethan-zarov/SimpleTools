@@ -34,7 +34,7 @@ namespace TMPro {
 
 
     [CreateAssetMenu(fileName = "TextStyle", menuName = "TextMeshPro/Text Style")]
-    public class TMP_StyleType
+    public class TMP_StyleType : ScriptableObject
     {
         public TMP_FontAsset font;
         public FontStyles style;
