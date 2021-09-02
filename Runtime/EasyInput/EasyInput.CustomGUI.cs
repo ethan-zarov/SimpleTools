@@ -216,7 +216,7 @@ namespace EthanZarov.SimpleTools.EasyInput
                     if (closestDistance > .04f)
                     {
                         Vector2 newPos = _transform.localPosition;
-                        newPos.y = Mathf.Lerp(tY, targetYPositions[closestIndex], InputConstants.dtLerp);
+                        newPos.y = Mathf.Lerp(tY, targetYPositions[closestIndex], .01f);
 
                         if (closestDistance * .9f < .04f)
                         {

@@ -14,9 +14,9 @@ namespace EthanZarov.SimpleTools.EasyInput
         /// <returns></returns>
         public static bool TouchedHitbox(this BoxCollider collider)
         {
-            if (InputConstants.colliders.Length > 0)
+            if (Constants.colliders.Length > 0)
             {
-                foreach (var _coll in InputConstants.colliders)
+                foreach (var _coll in Constants.colliders)
                 {
                     if (_coll == collider)
                     {
