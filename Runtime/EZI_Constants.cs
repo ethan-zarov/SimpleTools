@@ -71,7 +71,6 @@ namespace EthanZarov.EZInput
                     }
                 }
 
-
                 Debug.Log(debugStr);
             }
         }

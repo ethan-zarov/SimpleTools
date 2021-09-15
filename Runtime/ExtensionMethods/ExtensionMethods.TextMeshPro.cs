@@ -53,10 +53,7 @@ namespace EthanZarov.SimpleTools
             return $"{color.TMProRichText()}{text}</color>";
         }
 
-        public static string ParagraphStyle(this string text)
-        {
-            return text.Resize("75%").Colorize("#dddce6");
-        }
+
 
         public static string NegatizedWord(this string text, bool trueFalseValue)
         {
