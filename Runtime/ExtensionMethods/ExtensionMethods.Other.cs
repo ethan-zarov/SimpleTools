@@ -65,6 +65,38 @@ namespace EthanZarov.SimpleTools
         {
             return (Vector2)globalPos - localOffset;
         }
+
+        public static Vector2 Normal(this Vector2 v)
+        {
+            return new Vector2(-v.y, v.x);
+        }
+
+        public static Vector2 Rotate(this Vector2 v, float degrees)
+        {
+            float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
+            float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+
+            float tx = v.x;
+            float ty = v.y;
+            v.x = (cos * tx) - (sin * ty);
+            v.y = (sin * tx) + (cos * ty);
+            return v;
+        }
+
+        public static Quaternion FaceDirection(this Vector2 v)
+        {
+            return v.FaceDirection(0);
+        }
+
+        public static Quaternion FaceDirection(this Vector2 v, float degreeOffset)
+        {
+            if (v != Vector2.zero)
+            {
+                float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+                return Quaternion.AngleAxis(angle, Vector3.forward);
+            }
+            else return Quaternion.identity;
+        }
     }
 
 
