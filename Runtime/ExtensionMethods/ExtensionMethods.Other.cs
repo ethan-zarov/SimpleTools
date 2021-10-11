@@ -92,7 +92,7 @@ namespace EthanZarov.SimpleTools
         {
             if (v != Vector2.zero)
             {
-                float angle = Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg;
+                float angle = Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg + degreeOffset;
                 return Quaternion.AngleAxis(angle, Vector3.forward);
             }
             else return Quaternion.identity;
