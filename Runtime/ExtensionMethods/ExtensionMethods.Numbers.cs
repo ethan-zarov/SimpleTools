@@ -247,6 +247,80 @@ namespace EthanZarov.SimpleTools
             return "?";
         }
 
+        public static string ToTuple(int number)
+        {
+            if (number < 10)
+            {
+                switch (number)
+                {
+                    case 0: return "Nulltuple";
+                    case 1: return "Single";
+                    case 2: return "Double";
+                    case 3: return "Triple";
+                    case 4: return "Quadruple";
+                    case 5: return "Quintuple";
+                    case 6: return "Hextuple";
+                    case 7: return "Septuple";
+                    case 8: return "Octuple";
+                    case 9: return "Nonuple";
+                    default: return "Nulltuple";
+                }
+            }
+            else
+            {
+                int ones = number % 10;
+                int tens = (number / 10) % 10;
+                int hundreds = number / 100;
+
+                string output = GetOnesPrefix(ones) + GetTensPrefix(tens);
+                
+                if (hundreds > 0)
+                {
+                    if (hundreds > 1) output = output + GetTensPrefix(hundreds);
+                    output += "cen";
+                }
+
+                if (output[output.Length - 1].Equals('c')) return output + "uple";
+                else return output + "tuple";
+            }
+        }
+
+        public static string GetOnesPrefix(int oneVal)
+        {
+            switch (oneVal)
+            {
+                case 0: return "";
+                case 1: return "un";
+                case 2: return "duo";
+                case 3: return "tre";
+                case 4: return "quattuor";
+                case 5: return "quin";
+                case 6: return "hex";
+                case 7: return "sept";
+                case 8: return "octo";
+                case 9: return "novem";
+                default: return "";
+            }
+        }
+
+        public static string GetTensPrefix(int tenVal)
+        {
+            switch (tenVal)
+            {
+                case 0: return "";
+                case 1: return "dec";
+                case 2: return "vigin";
+                case 3: return "trigin";
+                case 4: return "quadragin";
+                case 5: return "quinquagin";
+                case 6: return "hexagin";
+                case 7: return "septagin";
+                case 8: return "octogin";
+                case 9: return "nongen";
+                default: return "";
+            }
+        }
+
         /// <summary>
         /// Generates a "+X THING(S)" text.
         /// </summary>
