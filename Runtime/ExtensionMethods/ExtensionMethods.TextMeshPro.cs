@@ -7,8 +7,8 @@ namespace EthanZarov.SimpleTools
         /// <summary>
         /// Converts a Unity Color to a TMPro rich text string.
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns><color=#YRCOLR></returns>
+        /// <param name="Unity Color"></param>
+        /// <returns>color=#YRCOLR, with caret brackets around it.</returns>
         public static string TMProRichText(this Color value)
         {
             return "<color=#" + ColorUtility.ToHtmlStringRGB(value) + ">";
@@ -16,7 +16,7 @@ namespace EthanZarov.SimpleTools
 
         public static string Bold(this string text)
         {
-            return $"<font=NP_Heavy>{text}</font>";
+            return $"<b>{text}</b>";
         }
 
         public static string Italic(this string text)
@@ -37,9 +37,10 @@ namespace EthanZarov.SimpleTools
         /// <summary>
         /// Colorizes a specific string.
         /// </summary>
-        /// <param name="hexadecimalColor">Color with a #?????? format.</param>
+        /// <param name="Hexadecimal Color">Color with a #?????? format.</param>
         public static string Colorize(this string text, string hexadecimalColor)
         {
+            if (!hexadecimalColor[0].Equals('#')) hexadecimalColor = "#" + hexadecimalColor;
             return $"<color={hexadecimalColor}>{text}</color>";
         }
 
@@ -47,13 +48,11 @@ namespace EthanZarov.SimpleTools
         /// <summary>
         /// Colorizes a specific string.
         /// </summary>
-        /// <param name="color">Color with Unity color format.</param>
+        /// <param name="Color">Color with Unity color format.</param>
         public static string Colorize(this string text, Color color)
         {
             return $"{color.TMProRichText()}{text}</color>";
         }
-
-
 
         public static string NegatizedWord(this string text, bool trueFalseValue)
         {

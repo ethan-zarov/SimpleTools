@@ -35,68 +35,130 @@ namespace EthanZarov.SimpleTools
         }
 
         #endregion
+        
+        #region Gizmos
+        
+        public static void GizmoArrow(this Vector2 value, Vector2 direction)
+        {
+            value.GizmoArrow(direction, direction.magnitude * .12f, 25);
+        }
+        public static void GizmoArrow(this Vector2 value, Vector2 direction, float distance)
+        {
+            value.GizmoArrow(direction.normalized * distance);
+        }
+        public static void GizmoArrow(this Vector2 position, Vector2 direction, float arrowSize, float arrowSpread)
+        {
+            
+            var endPosition = position + direction;
+            Gizmos.DrawLine(position, endPosition);
+            var leftDir = -direction.Rotate(-arrowSpread).normalized * arrowSize;
+            var rightDir = -direction.Rotate(arrowSpread).normalized * arrowSize;
 
-        /// <summary>
-        /// Gets the local offset of an object relative to its global position.
-        /// </summary>
-        /// <param name="obj">Object to get the local offset of.</param>
-        /// <returns>Vector2 offset of the local position.</returns>
-        public static Vector2 GetLocalOffset(this Transform obj)
-        {
-            return obj.position - obj.localPosition;
-        }
-        /// <summary>
-        /// Get a global position relative to an objects local offset.
-        /// </summary>
-        /// <param name="localPos">The target local position.</param>
-        /// <param name="localOffset">The target object's local offset to use.</param>
-        /// <returns>The outputted global position.</returns>
-        public static Vector2 LocalToGlobalPos(this Vector3 localPos, Vector2 localOffset)
-        {
-            return (Vector2)localPos + localOffset;
-        }
-        /// <summary>
-        /// Get the local position based on an object's local offset from a global position.
-        /// </summary>
-        /// <param name="globalPos">The input global position.</param>
-        /// <param name="localOffset">The target object's local offset to use.</param>
-        /// <returns>The outputted local position.</returns>
-        public static Vector2 GlobalToLocalPos(this Vector3 globalPos, Vector2 localOffset)
-        {
-            return (Vector2)globalPos - localOffset;
+            Gizmos.DrawLine(endPosition, endPosition + leftDir);
+            Gizmos.DrawLine(endPosition, endPosition + rightDir);
         }
 
-        public static Vector2 Normal(this Vector2 v)
-        {
-            return new Vector2(-v.y, v.x);
-        }
 
-        public static Vector2 Rotate(this Vector2 v, float degrees)
+        private static void GenerateSightlineMesh(this Mesh mesh, Vector2 position, Vector2 sightVector, float angleSpread)
         {
-            float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
-            float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+            //Get total number of points. There should be a point every 3 degrees.
+            //If angle spread is 28 then from an edge of the sightline to the center, there should be 9 intermediary points.
+            var intermediaryPoints = Mathf.FloorToInt(angleSpread / 3f);
+            var totalPoints = 4 + intermediaryPoints * 2; //The four additional points are the origin, far left, center, and far right.
 
-            float tx = v.x;
-            float ty = v.y;
-            v.x = (cos * tx) - (sin * ty);
-            v.y = (sin * tx) + (cos * ty);
-            return v;
-        }
-
-        public static Quaternion FaceDirection(this Vector2 v)
-        {
-            return v.FaceDirection(0);
-        }
-
-        public static Quaternion FaceDirection(this Vector2 v, float degreeOffset)
-        {
-            if (v != Vector2.zero)
+            Vector3[] vertices = new Vector3[totalPoints];
+            Vector3[] normals = new Vector3[totalPoints];
+            
+            //Set triangles. If there are 5 points, there are 3 triangles.
+            int[] triangles = new int[(totalPoints - 2) * 3];
+            
+            ////////////////////////////////////////////////////////////////////
+            
+            //Origin
+            vertices[0] = position;
+            normals[0] = Vector3.forward;
+            
+            
+            //Counter-clockwise-most point
+            vertices[1] = position + sightVector.Rotate(angleSpread);
+            normals[1] = Vector3.forward;
+            
+            //Set left side points
+            float tDiv = intermediaryPoints + 1;
+            for (var i = 0; i < intermediaryPoints; i++)
             {
-                float angle = Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg + degreeOffset;
-                return Quaternion.AngleAxis(angle, Vector3.forward);
+                var t = (intermediaryPoints - i) / tDiv;
+                vertices[i+2] = position + sightVector.Rotate(angleSpread * t);
+                normals[i+2] = Vector3.forward;
             }
-            else return Quaternion.identity;
+            
+            //Center sightline point
+            vertices[intermediaryPoints+2] = position + sightVector; 
+            normals[intermediaryPoints+2] = Vector3.forward;
+            //Set right side points
+            for (var i = 0; i < intermediaryPoints; i++)
+            {
+                var t = (i+1) / tDiv;
+                vertices[i+intermediaryPoints + 3] = position + sightVector.Rotate(-angleSpread * t);
+                normals[i+intermediaryPoints + 3] = Vector3.forward;
+            }
+
+            vertices[totalPoints - 1] = position + sightVector.Rotate(-angleSpread);
+            normals[totalPoints - 1] = Vector3.forward;
+            
+            for (int i = 0; i < totalPoints-2; i++)
+            {
+                triangles[i * 3] = 0;
+                triangles[i * 3 + 1] = i + 1;
+                triangles[i * 3 + 2] = i + 2;
+            }
+
+            mesh.vertices = vertices;
+            mesh.normals = normals;
+            mesh.triangles = triangles;
         }
+        public static void GizmoSightline(this Mesh mesh, Vector2 position, Vector2 sightVector, float angleSpread)
+        {
+            mesh.GenerateSightlineMesh(position, sightVector, angleSpread);
+
+            Gizmos.color = Gizmos.color.SetAlpha(.25f);
+            Gizmos.DrawMesh(mesh);
+
+            Gizmos.color = Gizmos.color.SetAlpha(1);
+
+        }
+
+        public static void GizmoSightline(this Mesh mesh, Vector2 position, Vector2 sightVector, float angleSpread, float distance)
+        {
+            mesh.GizmoSightline(position, sightVector.normalized * distance, angleSpread);
+        }
+        
+        public static void GizmoSightline(this Mesh mesh, Vector2 position, float angle, float angleSpread)
+        {
+            mesh.GizmoSightline(position, angle.DegToVec2(), angleSpread);
+        }
+        
+        public static void GizmoWireSightline(this Mesh mesh, Vector2 position, Vector2 sightVector, float angleSpread)
+        {
+            mesh.GenerateSightlineMesh(position, sightVector, angleSpread);
+
+            Gizmos.color = Gizmos.color.SetAlpha(.25f);
+            Gizmos.DrawWireMesh(mesh);
+
+            Gizmos.color = Gizmos.color.SetAlpha(1);
+
+        }
+
+        public static void GizmoWireSightline(this Mesh mesh, Vector2 position, Vector2 sightVector, float angleSpread, float distance)
+        {
+            mesh.GizmoWireSightline(position, sightVector.normalized * distance, angleSpread);
+        }
+
+        public static void GizmoWireSightline(this Mesh mesh, Vector2 position, float angle, float angleSpread)
+        {
+            mesh.GizmoWireSightline(position, angle.DegToVec2(), angleSpread);
+        }
+        #endregion
     }
 
 
