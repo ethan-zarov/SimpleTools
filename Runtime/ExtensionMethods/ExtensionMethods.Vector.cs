@@ -23,7 +23,25 @@ namespace EthanZarov.SimpleTools
             return RadToVec2(value * Mathf.Deg2Rad) * length;
         }
 
+        public static Vector2 Lerp_DeltaTime(this Vector2 value, Vector2 target, float t)
+        {
+            return Vector2.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.deltaTime));
+        }
         
+        public static Vector2 Lerp_UnscaledDeltaTime(this Vector2 value, Vector2 target, float t)
+        {
+            return Vector2.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.unscaledDeltaTime));
+        }
+        
+        public static Vector3 Lerp_DeltaTime(this Vector3 value, Vector3 target, float t)
+        {
+            return Vector3.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.deltaTime));
+        }
+        
+        public static Vector3 Lerp_UnscaledDeltaTime(this Vector3 value, Vector3 target, float t)
+        {
+            return Vector3.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.unscaledDeltaTime));
+        }
         
         #region Vector Local / World Space
         /// <summary>

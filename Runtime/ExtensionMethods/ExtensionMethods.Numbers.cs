@@ -5,6 +5,7 @@ namespace EthanZarov.SimpleTools
 {
     public static partial class ExtensionMethods
     {
+        
 
         #region Int/Float Functions
         /// <summary>
@@ -53,6 +54,16 @@ namespace EthanZarov.SimpleTools
                 totalValue += singleInt;
             }
             return totalValue / value.Count;
+        }
+
+        public static float Lerp_DeltaTime(this float value, float target, float t)
+        {
+            return Mathf.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.deltaTime));
+        }
+        
+        public static float Lerp_UnscaledDeltaTime(this float value, float target, float t)
+        {
+            return Mathf.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.unscaledDeltaTime));
         }
         #endregion
 
