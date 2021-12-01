@@ -43,6 +43,23 @@ namespace EthanZarov.SimpleTools
             return Vector3.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.unscaledDeltaTime));
         }
         
+        public static Quaternion Lerp_DeltaTime(this Quaternion value, Quaternion target, float t)
+        {
+            return Quaternion.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.deltaTime));
+        }
+        
+                
+        public static Quaternion Lerp_FixedDeltaTime(this Quaternion value, Quaternion target, float t)
+        {
+            return Quaternion.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.fixedDeltaTime));
+        }
+
+        
+        public static Quaternion Lerp_UnscaledDeltaTime(this Quaternion value, Quaternion target, float t)
+        {
+            return Quaternion.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.unscaledDeltaTime));
+        }
+        
         #region Vector Local / World Space
         /// <summary>
         /// Gets the local offset of an object relative to its global position.
