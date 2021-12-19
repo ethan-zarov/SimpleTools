@@ -1,40 +1,38 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
+namespace EthanZarov {
 
-namespace TMPro {
-
-    public class TMP_Style : MonoBehaviour
+    public class TMPStyle : MonoBehaviour
     {
-        [SerializeField] private TMP_StyleType styleType;
+        [SerializeField] private TMPStyleType styleType;
 
-        TextMeshPro textbox;
-        TextMeshProUGUI textboxUGUI;
+        private TextMeshPro _textbox;
+        private TextMeshProUGUI _textboxUGUI;
 
-        bool isUGUI;
 
         private void Awake()
         {
             if (GetComponent<TextMeshPro>())
             {
-                textbox = GetComponent<TextMeshPro>();
+                _textbox = GetComponent<TextMeshPro>();
 
-                textbox.font = styleType.font;
-                textbox.fontStyle = styleType.style;
+                _textbox.font = styleType.font;
+                _textbox.fontStyle = styleType.style;
             }
             else
             {
-                textboxUGUI = GetComponent<TextMeshProUGUI>();
+                _textboxUGUI = GetComponent<TextMeshProUGUI>();
 
-
-                textboxUGUI.fontStyle = styleType.style;
-                textboxUGUI.font = styleType.font;
+                _textboxUGUI.fontStyle = styleType.style;
+                _textboxUGUI.font = styleType.font;
             }
         }
     }
 
 
     [CreateAssetMenu(fileName = "TextStyle", menuName = "TextMeshPro/Text Style")]
-    public class TMP_StyleType : ScriptableObject
+    public class TMPStyleType : ScriptableObject
     {
         public TMP_FontAsset font;
         public FontStyles style;

@@ -77,17 +77,10 @@ namespace EthanZarov.SimpleTools
         {
             if (value < 0.02f)
             {
-
-                if (showDecimal)
-                {
-                    return "0.00";
-                }
-                else
-                {
-                    return "0:00";
-                }
+                return showDecimal ? "0.00" : "0:00";
             }
-            else if (value < 10 && showDecimal)
+
+            if (value < 10 && showDecimal)
             {
                 int totalVal = Mathf.RoundToInt(value * 100);
                 string ones = Mathf.FloorToInt((float)totalVal / 100f).ToString();

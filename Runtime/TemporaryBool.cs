@@ -7,37 +7,31 @@ namespace EthanZarov.SimpleTools
     /// - Boolean whose true toggle operates on a timer or temporary value. - ///
     public class TemporaryBool
     {
+        private float _timer;
+
+        private readonly float _defaultTimerLength;
+
+        public TemporaryBool() {  _defaultTimerLength = 1f; }
+        public TemporaryBool(float typicalDuration) { _defaultTimerLength = typicalDuration; }
         
-        private bool value;
-        private float timer;
-        float timeActive;
 
-        private float defaultTimerLength; //
-
-        public TemporaryBool() {  defaultTimerLength = .5f; }
-        public TemporaryBool(float typicalDuration) { defaultTimerLength = typicalDuration; }
-
-
-
-        public bool IsActive()
-        {
-            return value;
-        }
+        public bool IsActive { get; private set; }
+        public float TimeActive { get; private set; }
 
         public void Activate()
         {
-            value = true;
-            timer = defaultTimerLength;
+            IsActive = true;
+            _timer = _defaultTimerLength;
 
-            timeActive = 0;
+            TimeActive = 0;
 
         }
         public void Activate(float customDuration)
         {
-            value = true;
-            timer = customDuration;
+            IsActive = true;
+            _timer = customDuration;
 
-            timeActive = 0;
+            TimeActive = 0;
         }
 
         /// <summary>
@@ -45,34 +39,82 @@ namespace EthanZarov.SimpleTools
         /// </summary>
         public void OverrideDeactivate()
         {
-            value = false;
-            timer = -1;
+            IsActive = false;
+            _timer = -1;
         }
 
-
-        public float TimeActive()
-        {
-            return timeActive;
-        }
 
         /// <summary>
         /// (Should be) called once per frame.
         /// </summary> 
         public void Tick()
         {
-            if (value)
+            if (IsActive)
             {
-                timer -= Time.deltaTime;
+                _timer -= Time.deltaTime;
 
-                if (timer < 0)
+                if (_timer < 0)
                 {
-                    value = false;
+                    IsActive = false;
                 }
             }
 
-            timeActive += Time.deltaTime;
+            TimeActive += Time.deltaTime;
         }
 
+        /// <summary>
+        /// (Should be) called once per fixed frame.
+        /// </summary> 
+        public void FixedTick()
+        {
+            if (IsActive)
+            {
+                _timer -= Time.fixedDeltaTime;
 
+                if (_timer < 0)
+                {
+                    IsActive = false;
+                }
+            }
+
+            TimeActive += Time.fixedDeltaTime;
+        }
+
+        
+        /// <summary>
+        /// (Should be) called once per frame.
+        /// </summary> 
+        public void UnscaledTick()
+        {
+            if (IsActive)
+            {
+                _timer -= Time.unscaledDeltaTime;
+
+                if (_timer < 0)
+                {
+                    IsActive = false;
+                }
+            }
+
+            TimeActive += Time.unscaledDeltaTime;
+        }
+
+        /// <summary>
+        /// (Should be) called once per fixed frame.
+        /// </summary> 
+        public void FixedUnscaledTick()
+        {
+            if (IsActive)
+            {
+                _timer -= Time.fixedUnscaledDeltaTime;
+
+                if (_timer < 0)
+                {
+                    IsActive = false;
+                }
+            }
+
+            TimeActive += Time.fixedUnscaledDeltaTime;
+        }
     }
 }

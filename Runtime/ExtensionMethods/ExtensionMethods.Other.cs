@@ -3,6 +3,7 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
+using Random = System.Random;
 
 namespace EthanZarov.SimpleTools
 {
@@ -15,14 +16,12 @@ namespace EthanZarov.SimpleTools
         /// </summary>
         public static void Shuffle<T>(this IList<T> list)
         {
-            int n = list.Count;
+            var n = list.Count;
             while (n > 1)
             {
                 n--;
-                int k = ThreadSafeRandom.ThisThreadsRandom.Next(n + 1);
-                T value = list[k];
-                list[k] = list[n];
-                list[n] = value;
+                var k = ThreadSafeRandom.ThisThreadsRandom.Next(n + 1);
+                (list[k], list[n]) = (list[n], list[k]);
             }
         }
 
@@ -34,9 +33,28 @@ namespace EthanZarov.SimpleTools
             return listToClone.Select(item => (T)item.Clone()).ToList();
         }
 
+        public static T GetRandomItem<T>(this IList<T> list)
+        {
+            return list.Count == 0 ? default(T) : list[UnityEngine.Random.Range(0, list.Count)];
+        }
+        
         #endregion
         
         #region Gizmos
+        
+        public static void GizmoSquare(this Vector2 position, float size)
+        {
+            var hs = size / 2f;
+            Vector2 ul = new Vector2(position.x - hs, position.y + hs);
+            Vector2 ur = new Vector2(position.x + hs, position.y + hs);
+            Vector2 bl = new Vector2(position.x - hs, position.y - hs);
+            Vector2 br = new Vector2(position.x + hs, position.y - hs);
+
+            Gizmos.DrawLine(ul, ur);
+            Gizmos.DrawLine(ur, br);
+            Gizmos.DrawLine(br, bl);
+            Gizmos.DrawLine(bl, ul);
+        }
         
         public static void GizmoArrow(this Vector2 value, Vector2 direction)
         {
@@ -159,6 +177,18 @@ namespace EthanZarov.SimpleTools
             mesh.GizmoWireSightline(position, angle.DegToVec2(), angleSpread);
         }
         #endregion
+        
+        
+        /// <summary>
+        /// Alphabetize the characters in the string.
+        /// </summary>
+        /// 
+        public static string Alphabetize(this string s)
+        {
+            var a = s.ToCharArray();
+            Array.Sort(a);
+            return new string(a);
+        }
     }
 
 

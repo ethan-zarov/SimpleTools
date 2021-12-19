@@ -1,7 +1,14 @@
 {
   "name": "com.ethanzarov.simpletools",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "displayName": "Simple Tools",
   "description": "A large set of tools and extension methods for handling input, TextMeshPro rich text, numbers and timers, and more.",
-  "type": "tool"
+  "type": "tool",
+  "author":
+  {
+    "name": "Ethan Zarov",
+    "email": "etz211@nyu.edu",
+    "url": "https://www.ethanzarov.com/" 
+  },
+  "keywords": ["tool", "helper", "functions", "extension"]
 }
