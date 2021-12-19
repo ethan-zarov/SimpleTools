@@ -5,19 +5,22 @@ namespace EthanZarov.SimpleTools
 {
     public static partial class ExtensionMethods
     {
-        
+
         public static Vector2 RadToVec2(this float value)
         {
             return new Vector2(Mathf.Cos(value), Mathf.Sin(value));
         }
+
         public static Vector2 RadToVec2(this float value, float length)
         {
             return RadToVec2(value) * length;
         }
+
         public static Vector2 DegToVec2(this float value)
         {
             return RadToVec2(value * Mathf.Deg2Rad);
         }
+
         public static Vector2 DegToVec2(this float value, float length)
         {
             return RadToVec2(value * Mathf.Deg2Rad) * length;
@@ -27,40 +30,75 @@ namespace EthanZarov.SimpleTools
         {
             return Vector2.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.deltaTime));
         }
-        
+
         public static Vector2 Lerp_UnscaledDeltaTime(this Vector2 value, Vector2 target, float t)
         {
             return Vector2.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.unscaledDeltaTime));
         }
-        
+
         public static Vector3 Lerp_DeltaTime(this Vector3 value, Vector3 target, float t)
         {
             return Vector3.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.deltaTime));
         }
-        
+
         public static Vector3 Lerp_UnscaledDeltaTime(this Vector3 value, Vector3 target, float t)
         {
             return Vector3.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.unscaledDeltaTime));
         }
-        
-        public static Quaternion Lerp_DeltaTime(this Quaternion value, Quaternion target, float t)
+
+
+        /// <summary>
+        /// Gets the normal vector to a target vector v.
+        /// </summary>
+        /// <returns>Returns the perpendicular (normal) vector.</returns>
+        public static Vector2 GetNormal(this Vector2 v)
         {
-            return Quaternion.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.deltaTime));
+            return new Vector2(-v.y, v.x);
         }
         
-                
-        public static Quaternion Lerp_FixedDeltaTime(this Quaternion value, Quaternion target, float t)
+
+        /// <summary>
+        /// Rotates a vector by a desired amount of degrees.
+        /// </summary>
+        /// <param name="v">Initial vector.</param>
+        /// <param name="degrees">Amount of degrees to rotate.</param>
+        /// <returns>Newly rotated vector.</returns>
+        public static Vector2 Rotate(this Vector2 v, float degrees)
         {
-            return Quaternion.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.fixedDeltaTime));
+            var sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
+            var cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+
+            var tx = v.x;
+            var ty = v.y;
+            v.x = (cos * tx) - (sin * ty);
+            v.y = (sin * tx) + (cos * ty);
+            return v;
         }
 
-        
-        public static Quaternion Lerp_UnscaledDeltaTime(this Quaternion value, Quaternion target, float t)
+        /// <summary>
+        /// Rotates a vector by a desired amount of degrees.
+        /// </summary>
+        /// <param name="v">Initial vector.</param>
+        /// <param name="radians">Amount of radians to rotate.</param>
+        /// <returns>Newly rotated vector.</returns>
+        public static Vector2 RotateRadians(this Vector2 v, float radians)
         {
-            return Quaternion.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.unscaledDeltaTime));
+            var sin = Mathf.Sin(radians);
+            var cos = Mathf.Cos(radians);
+
+            var tx = v.x;
+            var ty = v.y;
+            v.x = (cos * tx) - (sin * ty);
+            v.y = (sin * tx) + (cos * ty);
+            return v;
         }
         
+        
+        
+
+
         #region Vector Local / World Space
+
         /// <summary>
         /// Gets the local offset of an object relative to its global position.
         /// </summary>
@@ -70,6 +108,7 @@ namespace EthanZarov.SimpleTools
         {
             return obj.position - obj.localPosition;
         }
+
         /// <summary>
         /// Get a global position relative to an objects local offset.
         /// </summary>
@@ -78,8 +117,9 @@ namespace EthanZarov.SimpleTools
         /// <returns>The outputted global position.</returns>
         public static Vector2 LocalToGlobalPos(this Vector3 localPos, Vector2 localOffset)
         {
-            return (Vector2)localPos + localOffset;
+            return (Vector2) localPos + localOffset;
         }
+
         /// <summary>
         /// Get the local position based on an object's local offset from a global position.
         /// </summary>
@@ -88,41 +128,13 @@ namespace EthanZarov.SimpleTools
         /// <returns>The outputted local position.</returns>
         public static Vector2 GlobalToLocalPos(this Vector3 globalPos, Vector2 localOffset)
         {
-            return (Vector2)globalPos - localOffset;
+            return (Vector2) globalPos - localOffset;
         }
+
         #endregion
-        
-        public static Vector2 Normal(this Vector2 v)
-        {
-            return new Vector2(-v.y, v.x);
-        }
 
-        public static Vector2 Rotate(this Vector2 v, float degrees)
-        {
-            float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
-            float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
 
-            float tx = v.x;
-            float ty = v.y;
-            v.x = (cos * tx) - (sin * ty);
-            v.y = (sin * tx) + (cos * ty);
-            return v;
-        }
-
-        public static Quaternion FaceDirection(this Vector2 v)
-        {
-            return v.FaceDirection(0);
-        }
-
-        public static Quaternion FaceDirection(this Vector2 v, float degreeOffset)
-        {
-            if (v != Vector2.zero)
-            {
-                float angle = Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg + degreeOffset;
-                return Quaternion.AngleAxis(angle, Vector3.forward);
-            }
-            else return Quaternion.identity;
-        }
     }
+
 
 }

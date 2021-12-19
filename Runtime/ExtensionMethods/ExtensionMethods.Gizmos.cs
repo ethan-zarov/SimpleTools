@@ -1,47 +1,11 @@
 ﻿using UnityEngine;
-using System;
-using System.Threading;
 using System.Collections.Generic;
-using System.Linq;
-using Random = System.Random;
 
 namespace EthanZarov.SimpleTools
 {
     public static partial class ExtensionMethods
     {
-        #region Lists
-
-        /// <summary>
-        /// Shuffles an IList into a random order.
-        /// </summary>
-        public static void Shuffle<T>(this IList<T> list)
-        {
-            var n = list.Count;
-            while (n > 1)
-            {
-                n--;
-                var k = ThreadSafeRandom.ThisThreadsRandom.Next(n + 1);
-                (list[k], list[n]) = (list[n], list[k]);
-            }
-        }
-
-        /// <summary>
-        /// Duplicates an IList without reference.
-        /// </summary>
-        public static IList<T> Clone<T>(this IList<T> listToClone) where T : ICloneable
-        {
-            return listToClone.Select(item => (T)item.Clone()).ToList();
-        }
-
-        public static T GetRandomItem<T>(this IList<T> list)
-        {
-            return list.Count == 0 ? default(T) : list[UnityEngine.Random.Range(0, list.Count)];
-        }
-        
-        #endregion
-        
-        #region Gizmos
-        
+       
         public static void GizmoSquare(this Vector2 position, float size)
         {
             var hs = size / 2f;
@@ -176,29 +140,6 @@ namespace EthanZarov.SimpleTools
         {
             mesh.GizmoWireSightline(position, angle.DegToVec2(), angleSpread);
         }
-        #endregion
-        
-        
-        /// <summary>
-        /// Alphabetize the characters in the string.
-        /// </summary>
-        /// 
-        public static string Alphabetize(this string s)
-        {
-            var a = s.ToCharArray();
-            Array.Sort(a);
-            return new string(a);
-        }
     }
 
-
-    public static class ThreadSafeRandom
-    {
-        [ThreadStatic] private static System.Random Local;
-
-        public static System.Random ThisThreadsRandom
-        {
-            get { return Local ?? (Local = new System.Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
-        }
-    }
 }
