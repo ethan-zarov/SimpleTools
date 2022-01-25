@@ -12,6 +12,7 @@ namespace EthanZarov.PrefixTries
         public readonly PrefixTrieNode[] Children = new PrefixTrieNode[26];
         public bool EndOfPath;
         public float WordDifficultyValue;
+        public List<string> ActualWords;
 
         public enum WordDifficulty
         {
@@ -23,11 +24,13 @@ namespace EthanZarov.PrefixTries
 
         public PrefixTrieNode()
         {
+            ActualWords = new List<string>();
             EndOfPath = false;
             for (var i = 0; i < AlphabetSize; i++)
             {
                 Children[i] = (null);
             }
+
         }
 
         public bool IsCommon => WordDifficultyValue <= 1;
@@ -57,17 +60,25 @@ namespace EthanZarov.PrefixTries
             int level;
             var length = word.Length;
             var checkedNode = _root;
-
+ 
+            
             for (level = 0; level < length; level++)
             {
                 var nodeIndex = word[level] - 'A';
-                if (nodeIndex < 0) return null; //Break if out of array bounds
+                if (nodeIndex < 0) {
+                    
+                    Debug.LogWarning("Word " + word + " has character " + word[level] + "at index " + level + " that doesn't fit into prefix trie: " + nodeIndex);
+                    continue;
+                    //Break if out of array bounds
+                }
 
                 if (checkedNode.Children[nodeIndex] == null) checkedNode.Children[nodeIndex] = GetNode();
                 checkedNode = checkedNode.Children[nodeIndex];
             }
 
             checkedNode.EndOfPath = true;
+            
+            
             return checkedNode;
         }
 
@@ -78,6 +89,30 @@ namespace EthanZarov.PrefixTries
             checkedNode.Difficulty = (PrefixTrieNode.WordDifficulty) (difficulty - 1);
         }
 
+        public void AddAlphabetizedWord(string alphaWord, string actualWord)
+        {
+            var checkedNode = AddWord(alphaWord);
+            if (checkedNode == null)
+            {
+                return;
+            }
+            checkedNode.ActualWords ??= new List<string>();
+            checkedNode.ActualWords.Add(actualWord);
+        }
+
+        public string AlphabeticToActualWord(string alphaWord)
+        {
+            var node = GetEndNodeAt(alphaWord);
+            if (node == null) return "!";
+            string output = "";
+            foreach (var t in node.ActualWords)
+            {
+                output += t + "  ";
+            }
+
+            return output;
+        }
+        
         public int GetWordDifficulty(string word)
         {
             var checkedNode = GetEndNodeAt(word);
@@ -273,6 +308,8 @@ namespace EthanZarov.PrefixTries
             }
 
         }
+        
+        
 
     }
 }
