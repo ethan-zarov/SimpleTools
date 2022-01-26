@@ -96,7 +96,7 @@ namespace EthanZarov.PrefixTries
             {
                 return;
             }
-            checkedNode.ActualWords ??= new List<string>();
+            checkedNode.ActualWords = new List<string>();
             checkedNode.ActualWords.Add(actualWord);
         }
 

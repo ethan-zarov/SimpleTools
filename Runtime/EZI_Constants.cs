@@ -7,23 +7,43 @@ namespace EthanZarov.EZInput
     public class EZI_Constants : MonoBehaviour
     {
 
-        [SerializeField] bool receivesInput;
-        [SerializeField] bool debugMode;
+        
+        [Tooltip("Main camera which static variables Pressed and TouchP are based upon. Other cameras that want DetectTouches need to call EZInput functions manually."), SerializeField] 
+        private Camera mainCamera;
+        
+        [Tooltip("When disabled, input will not be detected."), SerializeField]
+        private bool receivesInput = true;
+        
+        [Tooltip("Max amount of colliders that a single frame can register as touched. Default is 5."), SerializeField]
+        private int maxColliders = 5;
 
-        public static bool pressed;
-        public static Vector3 touchP;
+        
+        [Space]
+        [Tooltip("If enabled, each frame will print out touch position and what is being touched."), SerializeField] 
+        private bool debugMode;
 
-        public static Collider[] colliders;
 
-
-        [SerializeField] private Camera mainCamera;
+        /// <summary>
+        /// If true, mouse/mobile input was pressed this frame.
+        /// </summary>
+        public static bool Pressed;
+        /// <summary>
+        /// Most recently logged position of mouse/touch.
+        /// NOTE: This only logs TouchP when mouse is clicked or when touch is clicked.
+        /// Does not account for dragging or mouse movement while click is up.
+        /// </summary>
+        public static Vector3 TouchP;
+        /// <summary>
+        /// All colliders touched. Mainly internal, used for detecting whether touched.
+        /// </summary>
+        public static Collider[] Colliders;
 
 
         private void Awake()
         {
-            if (colliders == null)
+            if (Colliders == null)
             {
-                colliders = new Collider[5];
+                Colliders = new Collider[5];
             }
 
             receivesInput = true;
@@ -33,12 +53,12 @@ namespace EthanZarov.EZInput
         {
             if (receivesInput)
             {
-                pressed = false;
-                EZInput.DetectTouches(out pressed, out touchP, mainCamera);
+                Pressed = false;
+                EZInput.DetectTouches(out Pressed, out TouchP, mainCamera);
 
-                if (pressed)
+                if (Pressed)
                 {
-                    Physics.OverlapSphereNonAlloc(touchP, .1f, colliders); 
+                    Physics.OverlapSphereNonAlloc(TouchP, .1f, Colliders); 
                 }
                 else ClearArray();
 
@@ -49,31 +69,39 @@ namespace EthanZarov.EZInput
             if (debugMode) DebugTouch();
         }
 
-        void ClearArray()
+        private static void ClearArray()
         {
-            for (int i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
-                colliders[i] = null;
+                Colliders[i] = null;
             }
         }
 
-
-        void DebugTouch()
+        private static void DebugTouch()
         {
-            if (pressed)
+            if (!Pressed) return;
+            var debugStr = "Touched at " + TouchP + '\n' + "Hitboxes: ";
+            foreach (var t in Colliders)
             {
-                string debugStr = "Touched at " + touchP + '\n' + "Hitboxes: ";
-                for (int i = 0; i < colliders.Length; i++)
+                if (t != null)
                 {
-                    if (colliders[i] != null)
-                    {
-                        debugStr += colliders[i].transform.gameObject.name + " // ";
-                    }
+                    debugStr += t.transform.gameObject.name + " // ";
                 }
-
-                Debug.Log(debugStr);
             }
+
+                
+            Debug.Log(debugStr);
         }
 
+        /// <summary>
+        /// Turn on/off input registering.
+        /// </summary>
+        /// <param name="inputOn"></param>
+        public void AllowInput(bool inputOn)
+        {
+            receivesInput = inputOn;
+            Pressed = false;
+            TouchP = Vector3.one * -1000f;
+        }
     }
 }

@@ -279,6 +279,9 @@ namespace EthanZarov.SimpleTools
             }
         }
 
+
+        #endregion
+        
         /// <summary>
         /// Generates a "+X THING(S)" text.
         /// </summary>
@@ -305,7 +308,13 @@ namespace EthanZarov.SimpleTools
             }
             else return "";
         }
-        #endregion
+        
+        
+        public static string NegatizedWord(this string text, bool trueFalseValue)
+        {
+            if (!trueFalseValue) return text + "n't";
+            else return text;
+        }
     }
 
 

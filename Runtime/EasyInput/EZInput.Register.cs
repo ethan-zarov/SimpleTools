@@ -14,9 +14,15 @@ namespace EthanZarov.EZInput
         /// <returns></returns>
         public static bool EZI_Touched(this Collider collider)
         {
-            if (EZI_Constants.colliders.Length > 0)
+            if (EZI_Constants.Colliders == null)
             {
-                foreach (var _coll in EZI_Constants.colliders)
+                Debug.LogError("Please add an EZI_Constants into the scene!");
+                return false;
+            }
+            
+            if (EZI_Constants.Colliders.Length > 0)
+            {
+                foreach (var _coll in EZI_Constants.Colliders)
                 {
                     if (_coll == collider)
                     {

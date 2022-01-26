@@ -6,7 +6,7 @@ namespace EthanZarov.SimpleTools
 {
     public static partial class ExtensionMethods
     {
-        
+        #region Remapping
         /// <summary>
         /// Remaps a float value within one given range to another.
         /// </summary>
@@ -19,7 +19,6 @@ namespace EthanZarov.SimpleTools
         {
             return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
         }
-
         
         /// <summary>
         /// Converts a value given a range to it's percent (0-1) along that range.
@@ -43,8 +42,9 @@ namespace EthanZarov.SimpleTools
         {
             return value * (targetTo - targetFrom) + targetFrom;
         }
-        
+        #endregion
 
+        #region Rounding
         /// <returns>String with XXX,XXX.X format.</returns>
         public static float RoundToTenths(this float value)
         {
@@ -52,13 +52,21 @@ namespace EthanZarov.SimpleTools
             if (dec > 9) dec = 9;
             return Mathf.FloorToInt(value) + ((float)dec / 10f);
         }
-
-
         
+        /// <returns>String with XXX,XXX.XX format.</returns>
+        public static float RoundToHundredths(this float value)
+        {
+            int dec = Mathf.RoundToInt((value * 100) % 100);
+            if (dec > 99) dec = 99;
+            return Mathf.FloorToInt(value) + ((float)dec / 100f);
+        }
+        #endregion
+
+        #region Averaging
         /// <returns>Returns average value of a list of integers.</returns>
         public static float GetAverage(this List<int> value)
         {
-            return Mathf.RoundToInt((float)value.Sum() / value.Count);
+            return (float)value.Sum() / value.Count;
         }
 
 
@@ -67,8 +75,7 @@ namespace EthanZarov.SimpleTools
         {
             return value.Sum() / value.Count;
         }
-
-        
+        #endregion
         
         #region Delta-Time Driven Lerp
         public static float Lerp_DeltaTime(this float value, float target, float t)
