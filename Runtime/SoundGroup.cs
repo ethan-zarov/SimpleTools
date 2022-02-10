@@ -36,12 +36,15 @@ namespace EthanZarov.SimpleTools
 
         public AudioClip GetRandomSoundUnweighted()
         {
+            if (sounds.Length == 0) return null;
             return sounds[UnityEngine.Random.Range(0, sounds.Length)].sound;
         }
 
         public AudioClip GetSoundAt(int index)
         {
-            return sounds[index % sounds.Length].sound;
+            if (sounds.Length == 0) return null;
+            WeightedSoundSample sample = sounds[index % sounds.Length];
+            return sample.sound;
         }
 
         void CalculateTotalWeight()
