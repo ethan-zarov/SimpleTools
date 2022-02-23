@@ -89,6 +89,7 @@ namespace EthanZarov.PrefixTries
             checkedNode.Difficulty = (PrefixTrieNode.WordDifficulty) (difficulty - 1);
         }
 
+
         public void AddAlphabetizedWord(string alphaWord, string actualWord)
         {
             var checkedNode = AddWord(alphaWord);
@@ -135,6 +136,11 @@ namespace EthanZarov.PrefixTries
             }
 
             return true;
+        }
+
+        public bool IsStartOfWord(string letters)
+        {
+            return GetEndNodeAt(letters) != null;
         }
 
         private PrefixTrieNode GetEndNodeAt(string word)

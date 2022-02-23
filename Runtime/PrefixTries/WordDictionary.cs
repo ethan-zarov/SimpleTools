@@ -16,13 +16,17 @@ namespace EthanZarov.PrefixTries
         [SerializeField, Tooltip("List of every acceptable word in the dictionary")]
         private TextAsset validDictionaryTextAsset;
         private List<string> _outputList;
+        
         [Header("Difficulty-Based Dictionary")]
         [SerializeField] private bool useDifficultyDictionaries;
         public TextAsset dictionaryEasy;
         public TextAsset dictionaryMedium;
         public TextAsset dictionaryHard;
-        
 
+        [Space] 
+        [SerializeField] private bool singularTree;
+
+        private PrefixTrie totalTree;
         private void Awake()
         {
             _matchAnagramsAlloc = new List<string>();
@@ -32,9 +36,9 @@ namespace EthanZarov.PrefixTries
         private void InitializeDictionary()
         {
             //Create tries
-            _alphaDictionary = new PrefixTrie[16];
-            _validDictionary = new PrefixTrie[16];
-            for (var i = 0; i < 12; i++)
+            _alphaDictionary = new PrefixTrie[30];
+            _validDictionary = new PrefixTrie[30];
+            for (var i = 0; i < 26; i++)
             {
                 _alphaDictionary[i] = new PrefixTrie();
                 _validDictionary[i] = new PrefixTrie();
@@ -42,9 +46,19 @@ namespace EthanZarov.PrefixTries
 
             //Create alphabetical-string dictionary (for anagrams etc.)
             var dictList = alphabetizedDictionaryTextAsset.text.Split('\n');
+            if (singularTree)
+            {
+                totalTree = new PrefixTrie();
+                
+            }
+            
             foreach (var t in dictList)
             {
+
                 var addedString = t.Replace("\r", "").ToUpper();
+                
+                
+                if (singularTree) totalTree.AddWord(addedString);
                 addedString = addedString.Alphabetize();
                 var length = addedString.Length;
 
@@ -62,6 +76,8 @@ namespace EthanZarov.PrefixTries
             AddWordsFromTextFile(dictionaryMedium, 2);
             AddWordsFromTextFile(dictionaryHard, 3);
 
+
+           
         }
 
         private void AddWordsFromTextFile(TextAsset textFile, int difficulty)
@@ -88,7 +104,18 @@ namespace EthanZarov.PrefixTries
             if (word.Length<3) return false;
             return !word.Contains("?") && _validDictionary[word.Length - 3].IsWord(word.ToUpper());
         }
-    
+
+
+        public bool IsStartToWord(string letters)
+        {
+            if (!singularTree)
+            {
+                print("CHECK SINGULAR TREE");
+                return false;
+            }
+
+            return totalTree.IsStartOfWord(letters);
+        }
 
 
         /// <summary>

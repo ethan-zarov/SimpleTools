@@ -45,6 +45,19 @@ namespace EthanZarov.SimpleTools
             }
             else return Quaternion.identity;
         }
+        
+        /// <summary>
+        /// Faces direction of a vector
+        /// </summary>
+        /// <param name="v">Vector to face towards</param>
+        public static Quaternion FaceDirection(this Vector3 v)
+        {
+            return Quaternion.LookRotation(v);
+        }
+        
+
+
+
     }
 
 }

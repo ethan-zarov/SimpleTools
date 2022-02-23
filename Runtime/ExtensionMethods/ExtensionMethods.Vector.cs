@@ -36,6 +36,16 @@ namespace EthanZarov.SimpleTools
             return Vector2.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.unscaledDeltaTime));
         }
 
+        public static Vector2 Lerp_FixedDeltaTime(this Vector2 value, Vector2 target, float t)
+        {
+            return Vector2.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.fixedDeltaTime));
+        }
+
+        public static Vector2 Lerp_FixedUnscaledDeltaTime(this Vector2 value, Vector2 target, float t)
+        {
+            return Vector2.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.fixedUnscaledDeltaTime));
+        }
+        
         public static Vector3 Lerp_DeltaTime(this Vector3 value, Vector3 target, float t)
         {
             return Vector3.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.deltaTime));
