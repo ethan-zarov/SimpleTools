@@ -103,7 +103,8 @@ namespace EthanZarov.SimpleTools
             return v;
         }
         
-
+        
+        
 
 
         #region Vector Local / World Space
@@ -145,19 +146,5 @@ namespace EthanZarov.SimpleTools
 
     }
 
-    public static class Vector2Helpers
-    {
-        public static Vector2 GetAngleBisector(Vector2 a, Vector2 b)
-        {
-            a.Normalize();
-            b.Normalize();
-            var thetaU = Mathf.Atan2(-a.x, a.y);
-            var thetaV = Mathf.Atan2(b.x, -b.y);
-
-            var middleTheta = (thetaU + thetaV) / 2f;
-            return new Vector2(Mathf.Cos(middleTheta), Mathf.Sin(middleTheta));
-
-        }
-    }
 
 }
