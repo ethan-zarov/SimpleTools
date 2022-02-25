@@ -55,6 +55,17 @@ namespace EthanZarov.SimpleTools
         {
             return Vector3.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.unscaledDeltaTime));
         }
+        
+        public static Vector3 Lerp_FixedDeltaTime(this Vector3 value, Vector3 target, float t)
+        {
+            return Vector3.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.fixedDeltaTime));
+        }
+
+        public static Vector3 Lerp_FixedUnscaledDeltaTime(this Vector3 value, Vector3 target, float t)
+        {
+            return Vector3.Lerp(value, target, 1 - Mathf.Pow(t / 1000000, Time.fixedUnscaledDeltaTime));
+        }
+
 
 
         /// <summary>
