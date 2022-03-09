@@ -88,7 +88,7 @@ namespace EthanZarov.SimpleTools
         /// <returns>String with XXX,XXX.X format.</returns>
         public static string GetRoundedDecimal(this float value)
         {
-            int dec = Mathf.RoundToInt((value * 10) % 10);
+            int dec = Mathf.Abs(Mathf.RoundToInt((value * 10) % 10));
             if (dec > 9) dec = 9;
             return WrittenNumber(Mathf.FloorToInt(value)) + "." + dec.ToString();
         }
@@ -103,12 +103,12 @@ namespace EthanZarov.SimpleTools
             int dec;
             if (value >= 10)
             {
-                dec = Mathf.RoundToInt((value * 10) % 10);
+                dec = Mathf.Abs(Mathf.RoundToInt((value * 10) % 10));
                 if (dec > 9) dec = 9;
             }
             else
             {
-                dec = Mathf.RoundToInt((value * 100) % 100);
+                dec = Mathf.Abs(Mathf.RoundToInt((value * 100) % 100));
                 if (dec > 99) dec = 99;
             }
             return WrittenNumber(Mathf.FloorToInt(value)) + "." + dec.ToString();
