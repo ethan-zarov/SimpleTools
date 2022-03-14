@@ -5,6 +5,8 @@ using EthanZarov.SimpleTools;
 namespace EthanZarov.SimpleTools
 {
     /// - Boolean whose true toggle operates on a timer or temporary value. - ///
+    /// - Functions with "Tick" decrease the timer til zero, setting the TemporaryBool back to false. - ///
+    /// -
     public class TemporaryBool
     {
         private float _timer;
@@ -13,8 +15,9 @@ namespace EthanZarov.SimpleTools
 
         public TemporaryBool() {  _defaultTimerLength = 1f; }
         public TemporaryBool(float typicalDuration) { _defaultTimerLength = typicalDuration; }
-        
 
+
+        private bool _permanentlyActive;
         public bool IsActive { get; private set; }
         public float TimeActive { get; private set; }
 
@@ -35,20 +38,32 @@ namespace EthanZarov.SimpleTools
         }
 
         /// <summary>
+        /// Activates the TemporaryBool until it's manually turned off.
+        /// </summary>
+        public void PermaActivate()
+        {
+            _permanentlyActive = true;
+            IsActive = true;
+        }
+
+        /// <summary>
         /// Overrides timer and automatically sets the TemporaryBool to false.
         /// </summary>
         public void OverrideDeactivate()
         {
             IsActive = false;
+            _permanentlyActive = false;
             _timer = -1;
         }
 
 
         /// <summary>
-        /// (Should be) called once per frame.
+        /// Ticks down the timer by Time.deltaTime, setting the TemporaryBool to false when it reaches zero.
         /// </summary> 
         public void Tick()
         {
+            TimeActive += Time.deltaTime;
+            if (_permanentlyActive) return;
             if (IsActive)
             {
                 _timer -= Time.deltaTime;
@@ -59,14 +74,15 @@ namespace EthanZarov.SimpleTools
                 }
             }
 
-            TimeActive += Time.deltaTime;
         }
 
         /// <summary>
-        /// (Should be) called once per fixed frame.
-        /// </summary> 
+        /// Ticks down the timer by Time.fixedDeltaTime, setting the TemporaryBool to false when it reaches zero.
+        /// </summary>  
         public void FixedTick()
         {
+            TimeActive += Time.fixedDeltaTime;
+            if (_permanentlyActive) return;
             if (IsActive)
             {
                 _timer -= Time.fixedDeltaTime;
@@ -77,15 +93,16 @@ namespace EthanZarov.SimpleTools
                 }
             }
 
-            TimeActive += Time.fixedDeltaTime;
         }
 
         
         /// <summary>
-        /// (Should be) called once per frame.
+        /// Ticks down the timer by Time.unscaledDeltaTime, setting the TemporaryBool to false when it reaches zero.
         /// </summary> 
         public void UnscaledTick()
         {
+            TimeActive += Time.unscaledDeltaTime;
+            if (_permanentlyActive) return;
             if (IsActive)
             {
                 _timer -= Time.unscaledDeltaTime;
@@ -96,14 +113,15 @@ namespace EthanZarov.SimpleTools
                 }
             }
 
-            TimeActive += Time.unscaledDeltaTime;
         }
 
         /// <summary>
-        /// (Should be) called once per fixed frame.
+        /// Ticks down the timer by Time.fixedUnscaledDeltaTime, setting the TemporaryBool to false when it reaches zero.
         /// </summary> 
         public void FixedUnscaledTick()
         {
+            TimeActive += Time.fixedUnscaledDeltaTime;
+            if (_permanentlyActive) return;
             if (IsActive)
             {
                 _timer -= Time.fixedUnscaledDeltaTime;
@@ -114,7 +132,6 @@ namespace EthanZarov.SimpleTools
                 }
             }
 
-            TimeActive += Time.fixedUnscaledDeltaTime;
         }
     }
 }
