@@ -8,32 +8,6 @@ namespace EthanZarov.EZInput
     public static partial class EZInput
     {
         /// <summary>
-        /// Detects whether the collider is touched. Requires InputConstants.cs running in the current scene.
-        /// </summary>
-        /// <param name="collider">Collider to detect hits on.</param>
-        /// <returns></returns>
-        public static bool EZI_Touched(this Collider collider)
-        {
-            if (EZI_Constants.Colliders == null)
-            {
-                Debug.LogError("Please add an EZI_Constants into the scene!");
-                return false;
-            }
-            
-            if (EZI_Constants.Colliders.Length > 0)
-            {
-                foreach (var _coll in EZI_Constants.Colliders)
-                {
-                    if (_coll == collider)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-        /// <summary>
         /// Detects whether a given touch position hits this collider.
         /// </summary>
         /// <param name="collider">Collider to detect hits on.</param>
