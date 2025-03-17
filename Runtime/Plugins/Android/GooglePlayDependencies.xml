@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dependencies>
+  <!-- Android dependencies -->
+  <androidPackages>
+    <!-- Google Play Games Services -->
+    <androidPackage spec="com.google.android.gms:play-services-games:23.1.0" />
+    <androidPackage spec="com.google.android.gms:play-services-auth:20.7.0" />
+    
+    <!-- AndroidX AppCompat -->
+    <androidPackage spec="androidx.appcompat:appcompat:1.6.1" />
+    
+    <!-- Core dependencies -->
+    <androidPackage spec="androidx.core:core:1.12.0" />
+
+    <!-- Repositories -->
+    <repositories>
+      <repository>https://maven.google.com</repository>
+    </repositories>
+  </androidPackages>
+
+  <!-- Android properties -->
+  <androidProperties>
+    <androidProperty name="android.useAndroidX" value="true" />
+    <androidProperty name="android.enableJetifier" value="true" />
+  </androidProperties>
+</dependencies>

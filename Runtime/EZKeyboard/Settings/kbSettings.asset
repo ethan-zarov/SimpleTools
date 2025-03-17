@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 718615ede20694741a41111e217d5d33, type: 3}
+  m_Name: kbSettings
+  m_EditorClassIdentifier: 
+  layout: {fileID: 11400000, guid: 46b1b0bfe5e2a4d5db0aca3c5e22670a, type: 2}
+  characterButtonDisplayTemplate: {fileID: 5612576644674235933, guid: da21c3a3bc9d24b9d9e84372e65b1c16, type: 3}
+  backspaceButtonDisplayTemplate: {fileID: 0}
+  keyHeight: 1.5
+  yPadding: 0.1
+  xPadding: 0.1
+  xMargins: {x: 0.1, y: 0.1}
+  yMargins: {x: 0.8, y: 0.1}
+  viewportSizeY: 0.336
