@@ -76,6 +76,11 @@ namespace EthanZarov.SimpleTools.EZKeyboard.Settings
                 ? settings.characterButtonDisplayTemplate
                 : settings.backspaceButtonDisplayTemplate;
 
+            if (button.buttonType == EZKeyboardButtonType.Custom)
+            {
+                template = settings.customDisplayTemplates[button.customButtonPrefabIndex];
+            }
+            
             var output = Instantiate(template, parentTransform);
             output.name = button.GetObjectName();
 

@@ -11,6 +11,7 @@ public class EZKeyboardSettings : ScriptableObject
     [BoxGroup("Config")] public EZKeyboardLayout layout;
     [BoxGroup("Config")] public EZKeyboardButtonDisplay characterButtonDisplayTemplate;
     [BoxGroup("Config")] public EZKeyboardButtonDisplay backspaceButtonDisplayTemplate;
+    [BoxGroup("Config")] public EZKeyboardButtonDisplay[] customDisplayTemplates;
     
     
     

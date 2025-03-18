@@ -4,6 +4,6 @@ namespace EthanZarov.SimpleTools.EZKeyboard
     {
         Character,
         Backspace,
-        KeyboardChanger,
+        Custom,
     }
 }

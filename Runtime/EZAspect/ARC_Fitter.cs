@@ -10,6 +10,8 @@ namespace Aspect_Ratio
             Center,
             Bottom
         }
+        
+        private bool IsValid => topHook != null && bottomHook != null && componentTop != null && componentBottom != null && resizedComponent != null;
 
         [SerializeField] private bool lateUpdate;
         [SerializeField] private Transform topHook;
@@ -21,10 +23,25 @@ namespace Aspect_Ratio
         [Space]
         [SerializeField] private float localXSize;
         [SerializeField] private VerticalClamp clampOption; // New variable for clamping option
+
+        private bool _isActive = true;
+        
+        public void SetActive(bool isActive)
+        {
+            _isActive = isActive;
+            UpdateAspectRatio(Camera.main);
+        }
         
         public void SetXSize(float xSize)
         {
             localXSize = xSize;
+            UpdateAspectRatio(Camera.main);
+        }
+        
+        public void SetHooks(Transform top, Transform bottom)
+        {
+            topHook = top;
+            bottomHook = bottom;
             UpdateAspectRatio(Camera.main);
         }
 
@@ -32,6 +49,7 @@ namespace Aspect_Ratio
 
         public override void UpdateAspectRatio(Camera camera)
         {
+            if (!_isActive || !IsValid) return;
             // Step 1: Calculate the target X scale  
             float widthU = 1f.ViewportSizeXToWorldSizeX(camera); // Your method for converting viewport size to world size  
             float targetScaleX = widthU / localXSize;  

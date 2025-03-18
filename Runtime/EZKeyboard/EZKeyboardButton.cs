@@ -1,4 +1,5 @@
 using System;
+using Sirenix.OdinInspector;
 
 namespace EthanZarov.SimpleTools.EZKeyboard
 {
@@ -6,7 +7,8 @@ namespace EthanZarov.SimpleTools.EZKeyboard
     public struct EZKeyboardButton
     {
         public EZKeyboardButtonType buttonType;
-        public char character;
+        [ShowIf("@buttonType == EZKeyboardButtonType.Character")] public char character;
+        [ShowIf("@buttonType == EZKeyboardButtonType.Custom")] public int customButtonPrefabIndex;
 
         public string GetObjectName()
         {

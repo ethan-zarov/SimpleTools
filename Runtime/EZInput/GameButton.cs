@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -6,13 +7,27 @@ namespace Utilities
 {
     public class GameButton : MonoBehaviour
     {
-        public bool IsActive;
+        [SerializeField] private bool defaultActive = true;
+        
         [SerializeField] private bool useAnimation = true;
         [SerializeField, ShowIf("useAnimation")] private Puffer puffer;
         [Space]
         [Space] [SerializeField] private UnityEvent pressButton;
 
-        
+        public bool IsActive
+        {
+            get
+            {
+              if (!_activeInitialized) return defaultActive;
+              return _isActive;
+            }
+            private set => _isActive = value;
+        }
+
+        private bool _activeInitialized;
+        private bool _isActive;
+
+
         //[FoldoutGroup("On Down")]
         
         public BoxCollider2D Collider => _collider;
@@ -26,27 +41,28 @@ namespace Utilities
 
         public void SetActive(bool active)
         {
+            _activeInitialized = true;
             IsActive = active;
         }
         
          
         public void PushDownButton()
         {
-            if (!IsActive) return;
+            if (!IsActive && !Input.GetKey(KeyCode.LeftShift)) return;
 
             if (useAnimation) puffer.PuffIn();
         }
 
         public void LetGo()
         {
-            if (!IsActive) return;
+            if (!IsActive && !Input.GetKey(KeyCode.LeftShift)) return;
             if (useAnimation) puffer.PuffOut();
         }
 
 
         public void CompleteButtonPress()
         {
-            if (!IsActive) return;
+            if (!IsActive && !Input.GetKey(KeyCode.LeftShift)) return;
             pressButton.Invoke();
             
 

@@ -30,7 +30,7 @@ namespace EthanZarov.SimpleTools.EZKeyboard
             boxCollider.size = sr.size;
         }
 
-        public void PressButton()
+        public virtual void PressButton()
         {
             EZKeyboardManager.PressButton(_button);
         }
