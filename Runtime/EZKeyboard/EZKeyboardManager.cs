@@ -94,6 +94,21 @@ namespace EthanZarov.SimpleTools.EZKeyboard.Settings
         private void Update()
         {
             Redraw();
+            
+            if (Input.inputString != "")
+            {
+                var upper = Input.inputString.ToUpper();
+                foreach (char c in upper)
+                {
+                    if ((int)c < 'A' || (int)c > 'Z') continue;
+                    OnCharacterButtonPress?.Invoke(c);
+                }
+            }
+            
+            if (Input.GetKeyDown(KeyCode.Backspace))
+            {
+                OnBackspaceButtonPress?.Invoke();
+            }
         }
 
         private void Redraw()
