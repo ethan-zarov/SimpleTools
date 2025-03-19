@@ -50,7 +50,7 @@ namespace Utilities
         {
             if (!IsActive && !Input.GetKey(KeyCode.LeftShift)) return;
 
-            if (useAnimation) puffer.PuffIn();
+            if (useAnimation && !Input.GetKey(KeyCode.LeftShift)) puffer.PuffIn();
         }
 
         public void LetGo()
