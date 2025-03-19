@@ -47,6 +47,31 @@ namespace Aspect_Ratio
 
         protected override bool LateUpdate => lateUpdate;
 
+
+        public float GetXSize(Camera camera)
+        {
+            // Step 1: Calculate the target X scale  
+            float widthU = 1f.ViewportSizeXToWorldSizeX(camera); // Your method for converting viewport size to world size  
+            float targetScaleX = widthU / localXSize;  
+  
+            // Step 2: Calculate the Y scale to fit between the top and bottom hooks  
+            var topLocal = resizedComponent.InverseTransformPoint(componentTop.position);  
+            var bottomLocal = resizedComponent.InverseTransformPoint(componentBottom.position);  
+  
+            float relativeDistance = Mathf.Abs(topLocal.y - bottomLocal.y);  
+            float targetDistance = Mathf.Abs(topHook.position.y - bottomHook.position.y);  
+  
+            float targetScaleY = targetDistance / relativeDistance;  
+  
+            // Step 3: Use the minimum of the X and Y scales for uniform scaling  
+            float uniformScale = Mathf.Min(targetScaleX, targetScaleY);  
+  
+            // Step 4: Adjust the scale of the resized component  
+            resizedComponent.localScale = new Vector3(uniformScale, uniformScale, resizedComponent.localScale.z);
+            return uniformScale * localXSize;
+
+        }
+        
         public override void UpdateAspectRatio(Camera camera)
         {
             if (!_isActive || !IsValid) return;

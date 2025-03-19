@@ -50,13 +50,13 @@ namespace Utilities
         {
             if (!IsActive && !Input.GetKey(KeyCode.LeftShift)) return;
 
-            if (useAnimation && !Input.GetKey(KeyCode.LeftShift)) puffer.PuffIn();
+            if (useAnimation && !Input.GetKey(KeyCode.LeftShift) && puffer != null) puffer.PuffIn();
         }
 
         public void LetGo()
         {
             if (!IsActive && !Input.GetKey(KeyCode.LeftShift)) return;
-            if (useAnimation) puffer.PuffOut();
+            if (useAnimation && puffer != null) puffer.PuffOut();
         }
 
 
