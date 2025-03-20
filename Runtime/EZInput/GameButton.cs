@@ -48,21 +48,21 @@ namespace Utilities
          
         public void PushDownButton()
         {
-            if (!IsActive && !Input.GetKey(KeyCode.LeftShift)) return;
+            if (!IsActive) return;
 
             if (useAnimation && !Input.GetKey(KeyCode.LeftShift) && puffer != null) puffer.PuffIn();
         }
 
         public void LetGo()
         {
-            if (!IsActive && !Input.GetKey(KeyCode.LeftShift)) return;
+            if (!IsActive) return;
             if (useAnimation && puffer != null) puffer.PuffOut();
         }
 
 
         public void CompleteButtonPress()
         {
-            if (!IsActive && !Input.GetKey(KeyCode.LeftShift)) return;
+            if (!IsActive) return;
             pressButton.Invoke();
             
 

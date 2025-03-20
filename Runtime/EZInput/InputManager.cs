@@ -15,7 +15,7 @@ namespace Utilities
 
         [SerializeField] private ContactFilter2D buttonContactFilter; //Layer mask used for detecting GameButtons.
         private Collider2D[] _hitboxAlloc; //Allocated array for detecting buttons 
-        private const int HitboxAllocSize = 10;
+        private const int HitboxAllocSize = 20;
 
         private List<GameButton> _pressedObjects;
     
@@ -140,6 +140,11 @@ namespace Utilities
     
         public static Vector2 TouchPosition()
         {
+            
+            if (Input.touchCount != 0)
+            {
+                _activeTouch = Input.GetTouch(0);
+            }
             Ray ray = _cam.ScreenPointToRay(isPC ? Input.mousePosition : _activeTouch.position);
             return ray.GetPoint(10); //TODO: if different angle, ensure distance to 0 is correect.
         
