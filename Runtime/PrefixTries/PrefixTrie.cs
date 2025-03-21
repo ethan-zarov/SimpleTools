@@ -12,6 +12,7 @@ namespace EthanZarov.PrefixTries
         public readonly PrefixTrieNode[] Children = new PrefixTrieNode[26];
         public bool EndOfPath;
         public float WordDifficultyValue;
+        public int TotalWords;
         public List<string> ActualWords;
 
         public enum WordDifficulty
@@ -50,6 +51,66 @@ namespace EthanZarov.PrefixTries
             return new PrefixTrieNode();
         }
 
+        public int TotalWords()
+        {
+            //Traverse to all leafs and add the ActualWords at it
+            return TotalWords(_root);
+        }
+        
+        private int TotalWords(PrefixTrieNode node)
+        {
+            int total = 0;
+            if (node.EndOfPath)
+            {
+                total++;
+            }
+
+            for (int i = 0; i < 26; i++)
+            {
+                if (node.Children[i] != null)
+                {
+                    total += TotalWords(node.Children[i]);
+                }
+            }
+
+            return total;
+        }
+        
+        public string GetWordAt(int index)
+        {
+            return GetWordAt(_root, index, "");
+        }
+        
+        //Loop using total words to skip certain char indices and get to the right location
+        private string GetWordAt(PrefixTrieNode node, int index, string currentString)
+        {
+            if (node.EndOfPath)
+            {
+                return currentString;
+            }
+
+            for (int i = 0; i < 26; i++)
+            {
+                var child = node.Children[i];
+                if (child != null)
+                {
+                    int childWordCount = child.TotalWords;
+                    if (index - childWordCount <= 0)
+                    {
+                        return GetWordAt(child, index, currentString + (char) (i + 'A'));
+                    }
+                    else
+                    {
+                        index -= childWordCount;
+                    }
+                }
+            }
+
+            return "";
+        }
+            
+            
+
         /// <summary>
         /// Adds the target word to the prefix trie.
         /// </summary>
@@ -61,6 +122,7 @@ namespace EthanZarov.PrefixTries
             var length = word.Length;
             var checkedNode = _root;
  
+            checkedNode.TotalWords++;
             
             for (level = 0; level < length; level++)
             {
@@ -74,6 +136,7 @@ namespace EthanZarov.PrefixTries
 
                 if (checkedNode.Children[nodeIndex] == null) checkedNode.Children[nodeIndex] = GetNode();
                 checkedNode = checkedNode.Children[nodeIndex];
+                checkedNode.TotalWords++;
             }
 
             checkedNode.EndOfPath = true;

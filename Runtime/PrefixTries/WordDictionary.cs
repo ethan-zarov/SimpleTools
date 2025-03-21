@@ -104,6 +104,11 @@ namespace EthanZarov.PrefixTries
             if (word.Length<3) return false;
             return !word.Contains("?") && _validDictionary[word.Length - 3].IsWord(word.ToUpper());
         }
+        
+        public PrefixTrie GetTrie(int wordLength)
+        {
+            return _validDictionary[wordLength - 3];
+        }
 
 
         public bool IsStartToWord(string letters)
