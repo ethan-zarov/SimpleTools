@@ -8,7 +8,6 @@ namespace EthanZarov.PrefixTries
     public class WordDictionary : MonoBehaviour
     {
    
-        private PrefixTrie[] _alphaDictionary; //Dictionary where letters are automatically alphabetized. Useful for finding anagrams
         private PrefixTrie[] _validDictionary;
 
         [SerializeField, Tooltip("Overall list of alphabetized strings that constitute words. For example, AGORT is on the list for GATOR, but not GATOR itself.")]
@@ -36,11 +35,9 @@ namespace EthanZarov.PrefixTries
         private void InitializeDictionary()
         {
             //Create tries
-            _alphaDictionary = new PrefixTrie[30];
             _validDictionary = new PrefixTrie[30];
             for (var i = 0; i < 26; i++)
             {
-                _alphaDictionary[i] = new PrefixTrie();
                 _validDictionary[i] = new PrefixTrie();
             } 
 
@@ -61,11 +58,6 @@ namespace EthanZarov.PrefixTries
                 if (singularTree) totalTree.AddWord(addedString);
                 addedString = addedString.Alphabetize();
                 var length = addedString.Length;
-
-                if (length >= 3)
-                {
-                    _alphaDictionary[length - 3].AddWord(addedString, 1);
-                }
             }
 
             //Create valid lookup dictionary
@@ -86,7 +78,7 @@ namespace EthanZarov.PrefixTries
             foreach (var t in dictList)
             {
                 var addedString = t.Replace("\r", "").ToUpper();
-                if (addedString.Length >= 3)
+                if (addedString.Length >= 3 && addedString.Length < 25)
                 {
                     _validDictionary[addedString.Length - 3].AddWord(addedString, difficulty);
                 }
@@ -217,24 +209,24 @@ namespace EthanZarov.PrefixTries
             return output;
         }
     
-        /// <summary>
-        /// Checks whether a string of characters
-        /// </summary>
-        /// <param name="providedLetters">Letters to rearrange.</param>
-        /// <returns></returns>
-        public bool HasAnagram(string providedLetters)
-        {
-            if (providedLetters.Length < 3) return false;
-            if (providedLetters.Contains("?"))
-            {
-                return false;
-            }
-
-            var upper = providedLetters.ToUpper();
-        
-            //If the alphabetical dictionary has the same list of character
-            return _alphaDictionary[providedLetters.Length - 3].IsWord(upper.Alphabetize());
-        }
+        // /// <summary>
+        // /// Checks whether a string of characters
+        // /// </summary>
+        // /// <param name="providedLetters">Letters to rearrange.</param>
+        // /// <returns></returns>
+        // public bool HasAnagram(string providedLetters)
+        // {
+        //     if (providedLetters.Length < 3) return false;
+        //     if (providedLetters.Contains("?"))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     var upper = providedLetters.ToUpper();
+        //
+        //     //If the alphabetical dictionary has the same list of character
+        //     return _alphaDictionary[providedLetters.Length - 3].IsWord(upper.Alphabetize());
+        // }
     
         /// <summary>
         /// Get one possible anagram of a string of letters.
