@@ -63,7 +63,7 @@ namespace EthanZarov.PrefixTries
             }
 
             //Create valid lookup dictionary
-            AddWordsFromTextFile(validDictionaryTextAsset,1);
+            AddWordsFromTextFile(validDictionaryTextAsset,3);
 
             if (!useDifficultyDictionaries) return;
             AddWordsFromTextFile(dictionaryEasy, 1);

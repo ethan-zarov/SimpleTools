@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using EthanZarov.SimpleTools;
 using System.Text;
 using JetBrains.Annotations;
@@ -404,7 +405,7 @@ namespace EthanZarov.PrefixTries
                 }
                 
                 if (testExtensions.Count < 3) continue; //If we didn't get enough extensions, skip this iteration
-                float score = EvalueWordExtensions(letterString, wordLength, testExtensions);
+                float score = EvaluateWordExtensions(letterString, wordLength, testExtensions);
                 
                 if (score > bestScore)
                 {
@@ -419,11 +420,14 @@ namespace EthanZarov.PrefixTries
                 Debug.LogWarning("Not enough extensions found for " + letterString + " with word length " + wordLength);
                 return new List<string>();
             }
-            //Debug.Log("Best extensions for " + letterString + " with word length " + wordLength + ": " + string.Join(", ", bestExtensions) + " with score: " + bestScore);
+            
+            EvaluateWordExtensions(letterString, wordLength, bestExtensions, true);
+            bestExtensions.Shuffle();
+            
             return bestExtensions;
         }
 
-        private float EvalueWordExtensions(string letterString, int wordLength, List<string> extensions)
+        private float EvaluateWordExtensions(string letterString, int wordLength, List<string> extensions, bool log = false)
         {
             if (extensions[0] == extensions[2] || extensions[1] == extensions[2] || extensions[0] == extensions[1])
             {
@@ -432,12 +436,64 @@ namespace EthanZarov.PrefixTries
             
             
             int score = 0;
-            int solution1 = EvaluateSolution(letterString, wordLength, extensions, 0, 1, 2);
-            int solution2 = EvaluateSolution(letterString, wordLength, extensions, 0, 2, 1);
-            int solution3 = EvaluateSolution(letterString, wordLength, extensions, 1, 0, 2);
-            int solution4 = EvaluateSolution(letterString, wordLength, extensions, 1, 2, 0);
-            int solution5 = EvaluateSolution(letterString, wordLength, extensions, 2, 0, 1);
-            int solution6 = EvaluateSolution(letterString, wordLength, extensions, 2, 1, 0);
+            float solution1 = EvaluateSolution(letterString, wordLength, extensions, 0, 1, 2);
+            float solution2 = EvaluateSolution(letterString, wordLength, extensions, 0, 2, 1);
+            float solution3 = EvaluateSolution(letterString, wordLength, extensions, 1, 0, 2);
+            float solution4 = EvaluateSolution(letterString, wordLength, extensions, 1, 2, 0);
+            float solution5 = EvaluateSolution(letterString, wordLength, extensions, 2, 0, 1);
+            float solution6 = EvaluateSolution(letterString, wordLength, extensions, 2, 1, 0);
+
+
+            if (log)
+            {
+                float bestScore = solution1;
+                int bestSolutionOrder1 = 0;
+                int bestSolutionOrder2 = 1;
+                int bestSolutionOrder3 = 2;
+
+                if (solution2 > bestScore)
+                {
+                    bestScore = solution2;
+                    bestSolutionOrder1 = 0;
+                    bestSolutionOrder2 = 2;
+                    bestSolutionOrder3 = 1;
+                }
+
+                if (solution3 > bestScore)
+                {
+                    bestScore = solution3;
+                    bestSolutionOrder1 = 1;
+                    bestSolutionOrder2 = 0;
+                    bestSolutionOrder3 = 2;
+                }
+
+                if (solution4 > bestScore)
+                {
+                    bestScore = solution4;
+                    bestSolutionOrder1 = 1;
+                    bestSolutionOrder2 = 2;
+                    bestSolutionOrder3 = 0;
+                }
+
+                if (solution5 > bestScore)
+                {
+                    bestScore = solution5;
+                    bestSolutionOrder1 = 2;
+                    bestSolutionOrder2 = 0;
+                    bestSolutionOrder3 = 1;
+                }
+
+                if (solution6 > bestScore)
+                {
+                    bestScore = solution6;
+                    bestSolutionOrder1 = 2;
+                    bestSolutionOrder2 = 1;
+                    bestSolutionOrder3 = 0;
+                }
+                
+                Debug.Log($"Best: {extensions[bestSolutionOrder1]}/{extensions[bestSolutionOrder2]}/{extensions[bestSolutionOrder3]}");
+            }
+
 
             int totalGoodPaths = 0;
             if (solution1 != 0) totalGoodPaths++;
@@ -447,9 +503,9 @@ namespace EthanZarov.PrefixTries
             if (solution5 != 0) totalGoodPaths++;
             if (solution6 != 0) totalGoodPaths++;
             
-            int totalScore = solution1 + solution2 + solution3 + solution4 + solution5 + solution6;
+            float totalScore = solution1 + solution2 + solution3 + solution4 + solution5 + solution6;
 
-            if (totalGoodPaths >= 5) totalScore *= 3;
+            if (totalGoodPaths >= 4 && totalGoodPaths != 6) totalScore *= 10;
             else if (totalGoodPaths >= 3) totalScore *= 2;
 
 
@@ -464,46 +520,78 @@ namespace EthanZarov.PrefixTries
             }
 
             float mult = 1f;
-            if (letterString.Contains(extensions[0])) mult *= .3f;
-            if (letterString.Contains(extensions[1])) mult *= .3f;
-            if (letterString.Contains(extensions[2])) mult *= .3f;
+
+            foreach (var ext in extensions)
+            {
+                if (letterString.Contains(ext)) mult *= .1f;
+            }
+
             foreach (var extension in extensions)
             {
                 foreach (var extChar in extension)
                 {
-                    if (letterString.Contains(extChar) == false) mult *= 2;
+                    if (letterString.Contains(extChar) == false) mult *= 20;
                 }
             }
             return totalScore;
 
         }
 
-        private int EvaluateSolution(string baseLetterString, int wordLength, List<string> extensions, int order1, int order2, int order3)
+        private float EvaluateSolution(string baseLetterString, int wordLength, List<string> extensions, int order1, int order2, int order3)
         {
+            float mult = 1f;
             int wordsFound = 0;
             string fullWord = baseLetterString + extensions[order1];
             string subWord1 = fullWord.Substring(fullWord.Length - wordLength);
-            if (IsWord(subWord1))
+            int diff1 = GetWordDifficulty(subWord1);
+            if (IsWord(subWord1) &&  diff1 != 3)
             {
                 wordsFound++;
+                if (diff1 == 2) mult *= .4f;
+                EvaluateChurroWord(subWord1, ref mult);
             }
+            if (baseLetterString.Contains(subWord1)) mult *= .1f;
             fullWord += extensions[order2];
             string subWord2 = fullWord.Substring(fullWord.Length - wordLength);
-            if (IsWord(subWord2))
+            int diff2 = GetWordDifficulty(subWord2);
+            if (IsWord(subWord2) && diff2 != 3)
             {
                 wordsFound++;
+                if (diff2 == 2) mult *= .4f;
+                EvaluateChurroWord(subWord2, ref mult);
             }
+            if (baseLetterString.Contains(subWord2)) mult *= .1f;
             fullWord += extensions[order3];
             string subWord3 = fullWord.Substring(fullWord.Length - wordLength);
-            if (IsWord(subWord3))
+            int diff3 = GetWordDifficulty(subWord3);
+            if (IsWord(subWord3) && diff3 != 3)
             {
                 wordsFound++;
+                if (diff3 == 2) mult *= .4f;
+                EvaluateChurroWord(subWord3, ref mult);
             }
+            if (baseLetterString.Contains(subWord3)) mult *= .1f;
 
-            if (wordsFound == 3) return 2000;
-            else if (wordsFound == 2) return 20;
-            else if (wordsFound == 1) return 5;
+            if (wordsFound == 3) return 200 * mult;
+            else if (wordsFound == 2) return 20 * mult;
+            else if (wordsFound == 1) return 5* mult;
             else return 0;
+        }
+
+        private void EvaluateChurroWord(string word, ref float mult)
+        {
+            if (word.Contains("ING")) mult *= .1f;
+            if (word.Contains("OUST")) mult *= .1f;
+            if (word.Contains("ABLE")) mult *= .1f;
+            if (word.Contains("ED")) mult *= .1f;
+            if (word.Contains("ATZ")) mult *= .1f;
+            if (word.Contains("VES")) mult *= .1f;
+            if (word.Contains("IES")) mult *= .1f;
+            if (word.Contains("EST")) mult *= .1f;
+            if (word.Contains("ETS")) mult *= .1f;
+            if (word.Contains("ERS")) mult *= .1f;
+            if (word.Contains("TER")) mult *= .1f;
+            if (word.Contains("SES")) mult *= .1f;
         }
 
         public string GetRandomWordExtension(string letters, int initialLength, int extensionLength)
@@ -599,23 +687,23 @@ namespace EthanZarov.PrefixTries
                 'G' => 3,
                 'H' => 4,
                 'I' => 1,
-                'J' => 8,
+                'J' => 60,
                 'K' => 5,
                 'L' => 1,
                 'M' => 3,
                 'N' => 1,
                 'O' => 1,
                 'P' => 3,
-                'Q' => 12,
+                'Q' => 40,
                 'R' => 1,
                 'S' => 1,
                 'T' => 1,
                 'U' => 2,
                 'V' => 4,
                 'W' => 4,
-                'X' => 8,
+                'X' => 30,
                 'Y' => 4,
-                'Z' => 10,
+                'Z' => 30,
                 '?' => 0,
                 _ => 1
             };
