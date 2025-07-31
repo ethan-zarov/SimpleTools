@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using EthanZarov.SimpleTools;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace EthanZarov.PrefixTries
@@ -377,8 +378,249 @@ namespace EthanZarov.PrefixTries
             }
 
         }
-        
-        
 
+        public List<string> GenerateWordExtensions(string letterString, int wordLength, int extensionLength)
+        {
+            float bestScore = -99;
+            List<string> bestExtensions = new List<string>();
+
+            List<string> testExtensions = new List<string>();
+            int initialLength = wordLength - extensionLength;
+            for (int i = 0; i < 1000; i++)
+            {
+                string progString = letterString;
+                testExtensions.Clear();
+                for (int j = 0; j < 3; j++)
+                {
+                    
+                    string ext = (GetRandomWordExtension(progString,initialLength, extensionLength));
+                    if (i > 800 && Random.Range(0f, 1f) > .4f) ext = GenerateRandomWordStart(extensionLength);
+                    
+                    if (ext.Length > 0)
+                    {
+                        testExtensions.Add(ext);
+                        progString += ext;
+                    }
+                }
+                
+                if (testExtensions.Count < 3) continue; //If we didn't get enough extensions, skip this iteration
+                float score = EvalueWordExtensions(letterString, wordLength, testExtensions);
+                
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestExtensions.Clear();
+                    bestExtensions.AddRange(testExtensions);
+                }
+            }
+            
+            if (bestExtensions.Count < 3)
+            {
+                Debug.LogWarning("Not enough extensions found for " + letterString + " with word length " + wordLength);
+                return new List<string>();
+            }
+            //Debug.Log("Best extensions for " + letterString + " with word length " + wordLength + ": " + string.Join(", ", bestExtensions) + " with score: " + bestScore);
+            return bestExtensions;
+        }
+
+        private float EvalueWordExtensions(string letterString, int wordLength, List<string> extensions)
+        {
+            if (extensions[0] == extensions[2] || extensions[1] == extensions[2] || extensions[0] == extensions[1])
+            {
+                return 0;
+            }
+            
+            
+            int score = 0;
+            int solution1 = EvaluateSolution(letterString, wordLength, extensions, 0, 1, 2);
+            int solution2 = EvaluateSolution(letterString, wordLength, extensions, 0, 2, 1);
+            int solution3 = EvaluateSolution(letterString, wordLength, extensions, 1, 0, 2);
+            int solution4 = EvaluateSolution(letterString, wordLength, extensions, 1, 2, 0);
+            int solution5 = EvaluateSolution(letterString, wordLength, extensions, 2, 0, 1);
+            int solution6 = EvaluateSolution(letterString, wordLength, extensions, 2, 1, 0);
+
+            int totalGoodPaths = 0;
+            if (solution1 != 0) totalGoodPaths++;
+            if (solution2 != 0) totalGoodPaths++;
+            if (solution3 != 0) totalGoodPaths++;
+            if (solution4 != 0) totalGoodPaths++;
+            if (solution5 != 0) totalGoodPaths++;
+            if (solution6 != 0) totalGoodPaths++;
+            
+            int totalScore = solution1 + solution2 + solution3 + solution4 + solution5 + solution6;
+
+            if (totalGoodPaths >= 5) totalScore *= 3;
+            else if (totalGoodPaths >= 3) totalScore *= 2;
+
+
+            int lettersScore = 0;
+            foreach (var ext in extensions)
+            {
+                string extUp = ext.ToUpper();
+                foreach (var extChar in extUp)
+                {
+                    lettersScore += GetScrabbleWorth(extChar)^2;
+                }
+            }
+
+            float mult = 1f;
+            if (letterString.Contains(extensions[0])) mult *= .3f;
+            if (letterString.Contains(extensions[1])) mult *= .3f;
+            if (letterString.Contains(extensions[2])) mult *= .3f;
+            foreach (var extension in extensions)
+            {
+                foreach (var extChar in extension)
+                {
+                    if (letterString.Contains(extChar) == false) mult *= 2;
+                }
+            }
+            return totalScore;
+
+        }
+
+        private int EvaluateSolution(string baseLetterString, int wordLength, List<string> extensions, int order1, int order2, int order3)
+        {
+            int wordsFound = 0;
+            string fullWord = baseLetterString + extensions[order1];
+            string subWord1 = fullWord.Substring(fullWord.Length - wordLength);
+            if (IsWord(subWord1))
+            {
+                wordsFound++;
+            }
+            fullWord += extensions[order2];
+            string subWord2 = fullWord.Substring(fullWord.Length - wordLength);
+            if (IsWord(subWord2))
+            {
+                wordsFound++;
+            }
+            fullWord += extensions[order3];
+            string subWord3 = fullWord.Substring(fullWord.Length - wordLength);
+            if (IsWord(subWord3))
+            {
+                wordsFound++;
+            }
+
+            if (wordsFound == 3) return 2000;
+            else if (wordsFound == 2) return 20;
+            else if (wordsFound == 1) return 5;
+            else return 0;
+        }
+
+        public string GetRandomWordExtension(string letters, int initialLength, int extensionLength)
+        {
+            string startLetters = letters.Substring(letters.Length - initialLength);
+            var checkedNode = GetEndNodeAt(startLetters);
+            if (checkedNode == null)
+            {
+                return GenerateRandomWordStart(extensionLength);
+            }
+            StringBuilder sb = new StringBuilder();
+            int count = 0;
+            //Pick a random child if possible extensionLength times
+            while (count < extensionLength)
+            {
+                int randomIndex = Random.Range(0, 26);
+                int attempts = 100;
+                //If the random index is not available, try again
+                while (checkedNode.Children[randomIndex] == null && attempts > 0)
+                {
+                    randomIndex = Random.Range(0, 26);
+                    attempts--;
+                }
+                
+                if (attempts <= 0) break; //If no child is available, break
+                
+                
+                sb.Append((char) (randomIndex + 'A'));
+                checkedNode = checkedNode.Children[randomIndex];
+                count++;
+            }
+            
+            if (checkedNode == null || !checkedNode.EndOfPath)
+            {
+                return "";
+            }
+            
+            return sb.ToString();
+        }
+        
+        public string GenerateRandomWordStart(int length)
+        {
+            if (length == 1)
+            {
+                int randomIndex = Random.Range(0, 26);
+                return ((char)(randomIndex + 'A')).ToString();
+            }
+            
+            int bestCount = 0;
+            string bestWord = "SPRAIN".Substring(0, length);
+
+            for (int i = 0; i < 1000; i++)
+            {
+                
+                //Starting from root, pick a random two letters.
+                StringBuilder sb = new StringBuilder();
+                PrefixTrieNode currentNode = _root;
+                for (int j = 0; j < length; j++)
+                {
+                    int randomIndex = Random.Range(0, 26);
+                    while (currentNode.Children[randomIndex] == null)
+                    {
+                        randomIndex = (randomIndex + 1) % 26;
+                    }
+                
+                    sb.Append((char) (randomIndex + 'A'));
+                    currentNode = currentNode.Children[randomIndex];
+                }
+
+                int c = currentNode.TotalWords;
+                if (c > bestCount)
+                {
+                    bestWord = sb.ToString();
+                    bestCount = c;
+
+                    if (bestCount > 20) return bestWord;
+                }
+            }
+
+
+            return bestWord;
+        }
+        public static int GetScrabbleWorth(char letter)
+        {
+            return letter switch
+            {
+                'A' => 1,
+                'B' => 3,
+                'C' => 3,
+                'D' => 2,
+                'E' => 1,
+                'F' => 4,
+                'G' => 3,
+                'H' => 4,
+                'I' => 1,
+                'J' => 8,
+                'K' => 5,
+                'L' => 1,
+                'M' => 3,
+                'N' => 1,
+                'O' => 1,
+                'P' => 3,
+                'Q' => 12,
+                'R' => 1,
+                'S' => 1,
+                'T' => 1,
+                'U' => 2,
+                'V' => 4,
+                'W' => 4,
+                'X' => 8,
+                'Y' => 4,
+                'Z' => 10,
+                '?' => 0,
+                _ => 1
+            };
+        }
     }
+    
+
 }

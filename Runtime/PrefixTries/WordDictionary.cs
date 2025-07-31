@@ -7,6 +7,7 @@ namespace EthanZarov.PrefixTries
 {
     public class WordDictionary : MonoBehaviour
     {
+        private static WordDictionary _main;
    
         private PrefixTrie[] _validDictionary;
 
@@ -28,6 +29,7 @@ namespace EthanZarov.PrefixTries
         private PrefixTrie totalTree;
         private void Awake()
         {
+            _main = this;
             _matchAnagramsAlloc = new List<string>();
             InitializeDictionary();
         }
@@ -91,10 +93,10 @@ namespace EthanZarov.PrefixTries
         /// </summary>
         /// <param name="word">Word to target</param>
         /// <returns></returns>
-        public bool CheckWord(string word)
+        public static bool CheckWord(string word)
         {
             if (word.Length<3) return false;
-            return !word.Contains("?") && _validDictionary[word.Length - 3].IsWord(word.ToUpper());
+            return !word.Contains("?") && _main._validDictionary[word.Length - 3].IsWord(word.ToUpper());
         }
         
         public PrefixTrie GetTrie(int wordLength)
