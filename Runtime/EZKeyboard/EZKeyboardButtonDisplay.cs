@@ -1,6 +1,7 @@
 using EthanZarov.SimpleTools.EZKeyboard.Settings;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace EthanZarov.SimpleTools.EZKeyboard
 {
@@ -14,11 +15,13 @@ namespace EthanZarov.SimpleTools.EZKeyboard
         
         private EZKeyboardButton _button;
         public float XMult => xMult;
-        
+
+        public UnityEvent<EZKeyboardButton> OnSetButton;
         
         public void SetButton(EZKeyboardButton button)
         {
             _button = button;
+            OnSetButton?.Invoke(button);
             textbox.text = button.character.ToString();
         }
 

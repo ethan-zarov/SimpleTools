@@ -10,6 +10,7 @@ namespace EthanZarov.PrefixTries
         private static WordDictionary _main;
    
         private PrefixTrie[] _validDictionary;
+        private PrefixTrie[] _validEasyDictionary;
 
         [SerializeField, Tooltip("Overall list of alphabetized strings that constitute words. For example, AGORT is on the list for GATOR, but not GATOR itself.")]
         private TextAsset alphabetizedDictionaryTextAsset;
@@ -71,7 +72,21 @@ namespace EthanZarov.PrefixTries
             AddWordsFromTextFile(dictionaryHard, 3);
 
 
+            _validEasyDictionary = new PrefixTrie[30];
+            for (var i = 0; i < 26; i++)
+            {
+                _validEasyDictionary[i] = new PrefixTrie();
+            } 
            
+            var dictEasyList = dictionaryEasy.text.Split('\n');
+            foreach (var t in dictEasyList)
+            {
+                var addedString = t.Replace("\r", "").ToUpper();
+                if (addedString.Length >= 3 && addedString.Length < 25)
+                {
+                    _validEasyDictionary[addedString.Length - 3].AddWord(addedString, 1);
+                }
+            }
         }
 
         private void AddWordsFromTextFile(TextAsset textFile, int difficulty)
@@ -103,6 +118,12 @@ namespace EthanZarov.PrefixTries
         {
             return _validDictionary[wordLength - 3];
         }
+        
+        public PrefixTrie GetEasyTrie(int wordLength)
+        {
+            return _validEasyDictionary[wordLength - 3];
+        }
+
 
 
         public bool IsStartToWord(string letters)
