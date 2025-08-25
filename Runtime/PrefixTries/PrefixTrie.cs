@@ -224,116 +224,6 @@ namespace EthanZarov.PrefixTries
             return checkedNode;
         }
 
-        public string GetRandomWord()
-        {
-            var node = _root;
-            StringBuilder sb = new StringBuilder();
-            
-            
-            
-            while (node != null)
-            {
-                if (node.EndOfPath)
-                {
-                    return sb.ToString();
-                }
-
-                int randomIndex = Random.Range(0, 26);
-                int attempts = 26;
-                while (node.Children[randomIndex] == null)
-                {
-                    randomIndex = (randomIndex + 1) % 26;
-                    attempts--;
-                    if (attempts <= 0)
-                    {
-                        Debug.LogError($"THIS SHOULD NOT HAPPEN THIS FUNCTION IS BAD");
-                        return sb.ToString(); //If no child is available, return what we have
-                    }
-                }
-                
-                sb.Append((char) (randomIndex + 'A'));
-                node = node.Children[randomIndex];
-            }
-            return sb.ToString();
-        }
-        
-        public void GetWordsForTemplate(string template, List<string> outputList)
-        {
-            GetWordsForTemplate(_root, template, "", 0, outputList);
-        }
-        
-        private void GetWordsForTemplate(PrefixTrieNode node, string template, string currentWord, int index, List<string> outputList)
-        {
-            if (node == null) return;
-
-            if (index == template.Length)
-            {
-                if (node.EndOfPath)
-                {
-                    outputList.Add(currentWord);
-                }
-                return;
-            }
-
-            if (template[index] == '?')
-            {
-                for (int i = 0; i < 26; i++)
-                {
-                    if (node.Children[i] != null)
-                    {
-                        GetWordsForTemplate(node.Children[i], template, currentWord+ (char) (i + 'A'),index + 1, outputList);
-                    }
-                }
-            }
-            else
-            {
-                int nodeIndex = template[index] - 'A';
-                if (nodeIndex >= 0 && nodeIndex < 26 && node.Children[nodeIndex] != null)
-                {
-                    GetWordsForTemplate(node.Children[nodeIndex], template, currentWord + template[index], index + 1, outputList);
-                }
-            }
-        }
-        
-        public int TotalWordsForTemplate(string template)
-        {
-            return TotalWordsForTemplate(_root, template, 0);
-        }
-        
-        private int TotalWordsForTemplate(PrefixTrieNode node, string template, int index)
-        {
-            if (node == null) return 0;
-
-            if (index == template.Length)
-            {
-                return node.EndOfPath ? 1 : 0;
-            }
-
-            if (template[index] == '?')
-            {
-                int total = 0;
-                for (int i = 0; i < 26; i++)
-                {
-                    if (node.Children[i] != null)
-                    {
-                        total += TotalWordsForTemplate(node.Children[i], template, index + 1);
-                    }
-                }
-                return total;
-            }
-            else
-            {
-                int nodeIndex = template[index] - 'A';
-                if (nodeIndex >= 0 && nodeIndex < 26 && node.Children[nodeIndex] != null)
-                {
-                    return TotalWordsForTemplate(node.Children[nodeIndex], template, index + 1);
-                }
-            }
-
-            return 0;
-        }
-
-
         public List<string> GetAnagrams(string baseString)
         {
             List<string> returnList = new List<string>();
@@ -342,7 +232,6 @@ namespace EthanZarov.PrefixTries
 
             return returnList;
         }
-        
 
         public List<string> GetAnagramsExclusive(string baseString, List<string> excludedWords)
         {

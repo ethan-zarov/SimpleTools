@@ -23,6 +23,17 @@ namespace Utilities
     
         private bool _executePuffIn;
         private bool _executePuffOut;
+
+        public void PuffIn()
+        {
+            PuffIn(0);
+        }
+
+        public void PuffOut()
+        {
+            PuffOut(0);
+        }
+        
         public Coroutine PuffFull(float delay = 0f, int loop = 0)
         {
             _executePuffIn = true;

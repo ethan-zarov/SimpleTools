@@ -10,19 +10,23 @@ namespace EthanZarov.SimpleTools.EZKeyboard
         [SerializeField] private float xMult = 1;
         [SerializeField] private SpriteRenderer sr;
         [SerializeField] private TextMeshPro textbox;
+        [SerializeField] private TextMeshPro altTextbox;
 
         [SerializeField] private BoxCollider2D boxCollider;
         
         private EZKeyboardButton _button;
         public float XMult => xMult;
-
-        public UnityEvent<EZKeyboardButton> OnSetButton;
+        
+        
         
         public void SetButton(EZKeyboardButton button)
         {
             _button = button;
-            OnSetButton?.Invoke(button);
             textbox.text = button.character.ToString();
+            if (altTextbox != null)
+            {
+                altTextbox.text = button.character.ToString();
+            }
         }
 
 

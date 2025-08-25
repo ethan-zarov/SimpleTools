@@ -91,6 +91,8 @@ namespace Aspect_Ratio
             // Step 3: Use the minimum of the X and Y scales for uniform scaling  
             float uniformScale = Mathf.Min(targetScaleX, targetScaleY);  
   
+            if (uniformScale > 80) Debug.Break();
+            
             // Step 4: Adjust the scale of the resized component  
             resizedComponent.localScale = new Vector3(uniformScale, uniformScale, resizedComponent.localScale.z);  
   
