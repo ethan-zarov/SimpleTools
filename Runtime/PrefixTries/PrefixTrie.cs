@@ -110,8 +110,16 @@ namespace EthanZarov.PrefixTries
 
             return "";
         }
+
+
+        public string GetRandomWord()
+        {
+            int totalWords = TotalWords();
+            int randomIndex = Random.Range(0, totalWords);
             
+            return GetWordAt(randomIndex);
             
+        }
 
         /// <summary>
         /// Adds the target word to the prefix trie.
@@ -727,6 +735,95 @@ namespace EthanZarov.PrefixTries
 
             return bestWord;
         }
+        
+        public void GetWordsForTemplate(string template, List<string> output)
+        {
+            output.Clear();
+            GetWordsForTemplate(_root, template, "", output);
+            
+        }
+        
+        public int TotalWordsForTemplate(string template)
+        {
+            return GetWordsForTemplate(_root, template, "");
+        }
+        
+        private int GetWordsForTemplate(PrefixTrieNode currentNode, string template, string currentWord)
+        {
+            if (template.Length == 0)
+            {
+                if (currentNode.EndOfPath)
+                {
+                    return 1;
+                }
+            }
+
+            var currentChar = template[0];
+            var remainingTemplate = template.Substring(1);
+
+            
+            if (currentChar == '?')
+            {
+                int c = 0;
+                for (var index = 0; index < 26; index++)
+                {
+                    var child = currentNode.Children[index];
+                    if (child == null) continue;
+                    
+                    c+= GetWordsForTemplate(child, remainingTemplate, currentWord + (char)('A'+index));
+                }
+                return c;
+            }
+            else
+            {
+                int currentCharIndex = currentChar - 'A';
+                if (currentNode.Children[currentCharIndex] != null)
+                {
+                    var nextNode = currentNode.Children[currentChar];
+                    return GetWordsForTemplate(nextNode, remainingTemplate, currentWord + currentChar);
+                }
+
+                return 0;
+            }
+
+        }
+        
+        private void GetWordsForTemplate(PrefixTrieNode currentNode, string template, string currentWord, List<string> output)
+        {
+            if (template.Length == 0)
+            {
+                if (currentNode.EndOfPath)
+                {
+                    output.Add(currentWord);
+                }
+
+                return;
+            }
+
+            var currentChar = template[0];
+            var remainingTemplate = template.Substring(1);
+
+            if (currentChar == '?')
+            {
+                for (var index = 0; index < 26; index++)
+                {
+                    var child = currentNode.Children[index];
+                    if (child == null) continue;
+                    
+                    GetWordsForTemplate(child, remainingTemplate, currentWord + (char)('A'+index), output);
+                }
+            }
+            else
+            {
+                int currentCharIndex = currentChar - 'A';
+                if (currentNode.Children[currentCharIndex] != null)
+                {
+                    var nextNode = currentNode.Children[currentChar];
+                    GetWordsForTemplate(nextNode, remainingTemplate, currentWord + currentChar, output);
+                }
+            }
+        }
+        
         public static int GetScrabbleWorth(char letter)
         {
             return letter switch

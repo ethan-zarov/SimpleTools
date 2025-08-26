@@ -10,6 +10,7 @@ namespace EthanZarov.PrefixTries
         private static WordDictionary _main;
    
         private PrefixTrie[] _validDictionary;
+        private PrefixTrie[] _easyDictionary;
 
         [SerializeField, Tooltip("Overall list of alphabetized strings that constitute words. For example, AGORT is on the list for GATOR, but not GATOR itself.")]
         private TextAsset alphabetizedDictionaryTextAsset;
@@ -38,9 +39,11 @@ namespace EthanZarov.PrefixTries
         {
             //Create tries
             _validDictionary = new PrefixTrie[30];
+            _easyDictionary = new PrefixTrie[30];
             for (var i = 0; i < 26; i++)
             {
                 _validDictionary[i] = new PrefixTrie();
+                _easyDictionary[i] = new PrefixTrie();
             } 
 
             //Create alphabetical-string dictionary (for anagrams etc.)
@@ -65,6 +68,16 @@ namespace EthanZarov.PrefixTries
             //Create valid lookup dictionary
             AddWordsFromTextFile(validDictionaryTextAsset,3);
 
+            var easyList = dictionaryEasy.text.Split('\n');
+            foreach (var t in easyList)
+            {
+                var addedString = t.Replace("\r", "").ToUpper();
+                if (addedString.Length >= 3 && addedString.Length < 25)
+                {
+                    _easyDictionary[addedString.Length - 3].AddWord(addedString, 1);
+                }
+            }
+            
             if (!useDifficultyDictionaries) return;
             AddWordsFromTextFile(dictionaryEasy, 1);
             AddWordsFromTextFile(dictionaryMedium, 2);
@@ -102,6 +115,11 @@ namespace EthanZarov.PrefixTries
         public PrefixTrie GetTrie(int wordLength)
         {
             return _validDictionary[wordLength - 3];
+        }
+        
+        public PrefixTrie GetEasyTrie(int wordLength)
+        {
+            return _easyDictionary[wordLength - 3];
         }
 
 
@@ -279,5 +297,9 @@ namespace EthanZarov.PrefixTries
             return returnArray;
         }
 
+
+
+        
+        
     }
 }
