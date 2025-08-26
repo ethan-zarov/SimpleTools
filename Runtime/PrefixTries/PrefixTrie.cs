@@ -192,6 +192,12 @@ namespace EthanZarov.PrefixTries
             return checkedNode != null && checkedNode.EndOfPath;
         }
 
+        public bool IsBlankWord(string word, out string foundWord)
+        {
+            return HasWord(word, _root, 0, out foundWord);
+        }
+        
+        
         public bool IsCommonWord(string word)
         {
             var checkedNode = GetEndNodeAt(word);
@@ -224,6 +230,53 @@ namespace EthanZarov.PrefixTries
             return checkedNode;
         }
 
+
+        private bool HasWord(string template, PrefixTrieNode currentNode, int currentDepth, out string word)
+        {
+            if (currentDepth == template.Length)
+            {
+                if (currentNode.EndOfPath)
+                {
+                    word = template;
+                    return true;
+                }
+
+                word = "";
+                return false;
+            }
+            
+            char currentChar = template[currentDepth];
+            if (currentChar == '?')
+            {
+                for (int i = 0; i < 26; i++)
+                {
+                    if (currentNode.Children[i] != null)
+                    {
+                        if (HasWord(template, currentNode.Children[i], currentDepth + 1, out word))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                int nodeIndex = currentChar - 'A';
+                if (nodeIndex < 0 || nodeIndex > 25) 
+                {
+                    word = "";
+                    return false;
+                }
+                if (currentNode.Children[nodeIndex] != null)
+                {
+                    return HasWord(template, currentNode.Children[nodeIndex], currentDepth + 1, out word);
+                }
+            }
+            word = "";
+            return false;
+        }
+
+        
         public List<string> GetAnagrams(string baseString)
         {
             List<string> returnList = new List<string>();
