@@ -202,7 +202,8 @@ namespace EthanZarov.PrefixTries
 
         public bool IsBlankWord(string word, out string foundWord)
         {
-            return HasWord(word, _root, 0, out foundWord);
+            foundWord = "";
+            return HasWord(word, "", _root, 0, ref foundWord);
         }
         
         
@@ -239,17 +240,16 @@ namespace EthanZarov.PrefixTries
         }
 
 
-        private bool HasWord(string template, PrefixTrieNode currentNode, int currentDepth, out string word)
+        private bool HasWord(string template, string currentWord, PrefixTrieNode currentNode, int currentDepth, ref string word)
         {
             if (currentDepth == template.Length)
             {
                 if (currentNode.EndOfPath)
                 {
-                    word = template;
+                    word = currentWord;
                     return true;
                 }
 
-                word = "";
                 return false;
             }
             
@@ -260,7 +260,7 @@ namespace EthanZarov.PrefixTries
                 {
                     if (currentNode.Children[i] != null)
                     {
-                        if (HasWord(template, currentNode.Children[i], currentDepth + 1, out word))
+                        if (HasWord(template, currentWord + (char)(i+'A'), currentNode.Children[i], currentDepth + 1, ref word))
                         {
                             return true;
                         }
@@ -272,15 +272,13 @@ namespace EthanZarov.PrefixTries
                 int nodeIndex = currentChar - 'A';
                 if (nodeIndex < 0 || nodeIndex > 25) 
                 {
-                    word = "";
                     return false;
                 }
                 if (currentNode.Children[nodeIndex] != null)
                 {
-                    return HasWord(template, currentNode.Children[nodeIndex], currentDepth + 1, out word);
+                    return HasWord(template, currentWord + currentChar, currentNode.Children[nodeIndex], currentDepth + 1, ref word);
                 }
             }
-            word = "";
             return false;
         }
 

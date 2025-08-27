@@ -106,10 +106,22 @@ namespace EthanZarov.PrefixTries
         /// </summary>
         /// <param name="word">Word to target</param>
         /// <returns></returns>
-        public static bool CheckWord(string word)
+        public static bool CheckWord(string word, bool blanksAreValid = false)
         {
             if (word.Length<3) return false;
+            if (blanksAreValid)
+            {
+                return _main._validDictionary[word.Length - 3].IsBlankWord(word, out _);
+            }
             return !word.Contains("?") && _main._validDictionary[word.Length - 3].IsWord(word.ToUpper());
+        }
+
+        public static string GetBlankWord(string template)
+        {
+            if (template.Length < 3) return template;
+            if (!template.Contains("?")) return template;
+            _main._validDictionary[template.Length - 3].IsBlankWord(template, out var bestWord);
+            return bestWord;
         }
         
         public PrefixTrie GetTrie(int wordLength)
