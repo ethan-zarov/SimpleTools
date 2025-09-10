@@ -17,11 +17,15 @@ namespace EthanZarov.SimpleTools.EZKeyboard
         private EZKeyboardButton _button;
         public float XMult => xMult;
         
+        [SerializeField] private UnityEvent<EZKeyboardButton> OnButtonSet;
+        
         
         
         public void SetButton(EZKeyboardButton button)
         {
             _button = button;
+            
+            OnButtonSet?.Invoke(button);
             textbox.text = button.character.ToString();
             if (altTextbox != null)
             {

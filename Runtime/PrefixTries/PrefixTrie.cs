@@ -777,7 +777,7 @@ namespace EthanZarov.PrefixTries
                 int currentCharIndex = currentChar - 'A';
                 if (currentNode.Children[currentCharIndex] != null)
                 {
-                    var nextNode = currentNode.Children[currentChar];
+                    var nextNode = currentNode.Children[currentCharIndex];
                     return GetWordsForTemplate(nextNode, remainingTemplate, currentWord + currentChar);
                 }
 
@@ -816,7 +816,7 @@ namespace EthanZarov.PrefixTries
                 int currentCharIndex = currentChar - 'A';
                 if (currentNode.Children[currentCharIndex] != null)
                 {
-                    var nextNode = currentNode.Children[currentChar];
+                    var nextNode = currentNode.Children[currentCharIndex];
                     GetWordsForTemplate(nextNode, remainingTemplate, currentWord + currentChar, output);
                 }
             }

@@ -50,7 +50,7 @@ namespace Aspect_Ratio
         private void Update()
         {
 
-            if (constantUpdate || Math.Abs(_currentAspectRatio - _cam.aspect) > .001f || Time.frameCount < 10) UpdateAspectRatio();
+            if (constantUpdate || Math.Abs(_currentAspectRatio - _cam.aspect) > .001f || Time.time < 5) UpdateAspectRatio();
 
             
         }

@@ -9,7 +9,12 @@ namespace Aspect_Ratio
         {
             AspectRatioManager.Register(this, LateUpdate);
         }
-        
+
+        private void Start()
+        {
+            UpdateAspectRatio(Camera.main);
+        }
+
 
         protected abstract bool LateUpdate { get; }
         public abstract void UpdateAspectRatio(Camera camera);
