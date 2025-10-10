@@ -24,6 +24,9 @@ namespace Aspect_Ratio
         [SerializeField] private float localXSize;
         [SerializeField] private VerticalClamp clampOption; // New variable for clamping option
 
+
+        [SerializeField] private float editorYOffset;
+        
         private bool _isActive = true;
         
         public void SetActive(bool isActive)
@@ -120,8 +123,14 @@ namespace Aspect_Ratio
                 float offset = bottomHook.position.y - componentBottom.position.y;
                 newPosition.y += offset;
             }
+            
+            #if UNITY_EDITOR
+            newPosition.y += editorYOffset;
+            #endif
 
             resizedComponent.localPosition = newPosition;
+            
+            
         }
     }
 }

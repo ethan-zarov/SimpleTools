@@ -109,11 +109,13 @@ namespace EthanZarov.PrefixTries
         public static bool CheckWord(string word, bool blanksAreValid = false)
         {
             if (word.Length<3) return false;
+            int index = word.Length - 3;
+            if (index < 0 || index >= _main._validDictionary.Length) return false;
             if (blanksAreValid)
             {
-                return _main._validDictionary[word.Length - 3].IsBlankWord(word, out _);
+                return _main._validDictionary[index].IsBlankWord(word, out _);
             }
-            return !word.Contains("?") && _main._validDictionary[word.Length - 3].IsWord(word.ToUpper());
+            return !word.Contains("?") && _main._validDictionary[index].IsWord(word.ToUpper());
         }
 
         public static string GetBlankWord(string template)
