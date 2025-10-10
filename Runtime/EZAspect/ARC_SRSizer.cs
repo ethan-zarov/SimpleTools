@@ -12,6 +12,8 @@ namespace Aspect_Ratio
         [SerializeField, ShowIf("adjustYSize")] private float ySize;
         [Space]
         [SerializeField] private bool lateUpdate;
+
+        [SerializeField] private bool factorScale;
         
         protected override bool LateUpdate => lateUpdate;
         public override void UpdateAspectRatio(Camera camera)
@@ -19,6 +21,8 @@ namespace Aspect_Ratio
             float width = xPercent.ViewportSizeXToWorldSizeX(camera);
 
             float targetYSize = adjustYSize ? this.ySize : sr.size.y;
+            
+            if (factorScale && transform.lossyScale.x > .01f) width /= transform.lossyScale.x;
             
             sr.size = new Vector2(width, targetYSize);
         }
