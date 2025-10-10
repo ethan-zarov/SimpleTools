@@ -8,6 +8,7 @@ namespace EthanZarov.SimpleTools.EZKeyboard.Settings
 {
     public class EZKeyboardManager : MonoBehaviour
     {
+        public static bool Initialized { get; private set; }
         private static EZKeyboardManager _main;
         public static Action<char> OnCharacterButtonPress;
         public static Action OnBackspaceButtonPress;
@@ -35,8 +36,6 @@ namespace EthanZarov.SimpleTools.EZKeyboard.Settings
         
         private void Awake()
         {
-            _main = this;
-            _cam = Camera.main;
             InitializeKeys();
         }
 
@@ -44,7 +43,10 @@ namespace EthanZarov.SimpleTools.EZKeyboard.Settings
 
         private void InitializeKeys()
         {
+            if (Initialized) return;
             
+            _main = this;
+            _cam = Camera.main;
             _allDisplays = new List<EZKeyboardButtonDisplay>();
             _rowHolders = new Transform[RowCount];
             _rowDisplays = new KeyboardRowDisplay[RowCount];
@@ -57,6 +59,8 @@ namespace EthanZarov.SimpleTools.EZKeyboard.Settings
                 _rowHolders[i] = rowHolder.transform;
                 CreateKeyboardRow(ref _rowDisplays[i].rowDisplays, row.buttons, rowHolder.transform);
             }
+
+            Initialized = true;
         }
 
         private void CreateKeyboardRow(ref EZKeyboardButtonDisplay[] output, EZKeyboardButton[] input, Transform outputTransform)
@@ -93,6 +97,8 @@ namespace EthanZarov.SimpleTools.EZKeyboard.Settings
         
         private void Update()
         {
+            if (!Initialized) return;
+            
             Redraw();
             
             if (Input.inputString != "")
@@ -216,6 +222,7 @@ namespace EthanZarov.SimpleTools.EZKeyboard.Settings
         //Place all the buttons so that they will appear centered relative to 0,0 local position of row transform. Each button width can be gotten by getting button.XMult * baseButtonWidth
         private void UpdateRowPositions(EZKeyboardButtonDisplay[] buttons, float buttonBaseWidth)
         {
+            if (!Initialized) return;
             float totalWidth = GetTotalButtonMult(buttons) * buttonBaseWidth;
             float totalPadding = (buttons.Length - 1) * settings.xPadding;
             float totalMargins = settings.xMargins.x + settings.xMargins.y;
@@ -233,6 +240,7 @@ namespace EthanZarov.SimpleTools.EZKeyboard.Settings
 
         public static void PressButton(EZKeyboardButton button)
         {
+            if (!Initialized) return;
             switch (button.buttonType)
             {
                 case EZKeyboardButtonType.Character:
