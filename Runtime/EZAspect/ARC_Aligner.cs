@@ -23,6 +23,12 @@ namespace Aspect_Ratio
             float viewportPositionY = screenPositionY.ScreenSizeYToViewportSizeY(camera);
 
             if (!useSafeArea) viewportPositionY = alignment.viewportPosition.y;
+            else
+            {
+#if UNITY_EDITOR
+                viewportPositionY -= .07f;
+#endif
+            }
             
             Vector2 basePosition = camera.ViewportToWorldPoint(new Vector2(alignment.viewportPosition.x, viewportPositionY));
             var targetPosition = basePosition + alignment.worldPositionOffset;
