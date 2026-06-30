@@ -6,19 +6,21 @@ namespace Aspect_Ratio
     public class ARC_Aligner : AspectRatioChanger
     {
         [Header("Base Settings")]
-        [SerializeField] private bool useLocalPosition = true;
-        [SerializeField] private bool lateUpdate; //If true, updates after other aspectratio changers.
         [SerializeField] private bool xOnly;
         [SerializeField] private bool yOnly;
         [SerializeField] private ScreenAlignment alignment;
         [SerializeField] private bool useSafeArea;
-        
 
-        
-        protected override bool LateUpdate => lateUpdate;
+#if UNITY_EDITOR
+        private void Reset()
+        {
+            updatePhase = AspectRatioUpdatePhase.AlignPost;
+            updateOrder = 0;
+        }
+#endif
+
         public override void UpdateAspectRatio(Camera camera)
         {
-            //Take the viewport position and remap from screen top to bottom to safe area top to bottom.
             float screenPositionY = Remap(alignment.viewportPosition.y, 0, 1, Screen.safeArea.yMin, Screen.safeArea.yMax);
             float viewportPositionY = screenPositionY.ScreenSizeYToViewportSizeY(camera);
 
@@ -29,37 +31,31 @@ namespace Aspect_Ratio
                 viewportPositionY -= .07f;
 #endif
             }
-            
-            Vector2 basePosition = camera.ViewportToWorldPoint(new Vector2(alignment.viewportPosition.x, viewportPositionY));
-            var targetPosition = basePosition + alignment.worldPositionOffset;
-            if (useLocalPosition)
-            {
-                if (xOnly) targetPosition.y = transform.localPosition.y;
-                if (yOnly) targetPosition.x = transform.localPosition.x;
-                transform.localPosition = targetPosition;
-            }
-            else
-            {
-                if (xOnly) targetPosition.y = transform.position.y;
-                if (yOnly) targetPosition.x = transform.position.x;
-                transform.position = targetPosition;
-            }
+
+            Vector3 viewportPoint = new Vector3(
+                alignment.viewportPosition.x,
+                viewportPositionY,
+                camera.WorldToViewportPoint(transform.position).z);
+            Vector3 worldTarget = camera.ViewportToWorldPoint(viewportPoint);
+            worldTarget += (Vector3)alignment.worldPositionOffset;
+            worldTarget.z = transform.position.z;
+
+            if (xOnly) worldTarget.y = transform.position.y;
+            if (yOnly) worldTarget.x = transform.position.x;
+
+            transform.position = worldTarget;
         }
 
-
-        
         [Serializable]
         public struct ScreenAlignment
         {
             public Vector2 viewportPosition;
             public Vector2 worldPositionOffset;
         }
-        
-        private float Remap (float value, float from1, float to1, float from2, float to2) {
+
+        private float Remap(float value, float from1, float to1, float from2, float to2)
+        {
             return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
         }
-
-
-
     }
 }
